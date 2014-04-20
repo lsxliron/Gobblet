@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	   <title> Gobblet </title>
+    	<script src="{{ url_for('static', filename='jQuery/jquery-2.1.0.js')}}" type="text/javascript"></script>
+        <script src="{{ url_for('static', filename='jQuery/scripts.js')}}" type="text/javascript"></script>
+        <script src="{{ url_for('static', filename='jQuery/jquerycollision1.0.2/jquery-collision.js')}}" type="text/javascript"></script>
+        <link rel="stylesheet" href="{{url_for('static',filename='CSS/styles.css') }}")>
+	</head>
+
+	<body>
+
+    <div style="width:100%; text-align:center; font-size:40px">
+        <h1><u>Gobblet</u></h1>
+    </div>
+
+    <div id="container" style="display:table; margin-top:3%; margin-left:10%">
+
+        <div id="row1" style="display:table-row; width:100%;">
+            <div id="cell00" style="display:table-cell;">
+                <canvas id="cv00" width="300" height="100"></canvas>
+                <canvas id="cv01" width="300" height="100" style="margin-left:-9%;"></canvas>
+                <canvas id="cv02" width="300" height="100" style="margin-left:-9%;"></canvas>
+                <canvas id="cv03" width="300" height="100" style="margin-left:-9%;"></canvas>
+            </div>
+        </div>
+
+
+
+        <div id="row2" style="display:table-row;" >
+            <div id="cell10" style="display:table-cell;">
+                <canvas id="cv10" width="300" height="100" style="margin-left:8.5%;"></canvas>
+                <canvas id="cv11" width="300" height="100" style="margin-left:-9%;"></canvas>
+                <canvas id="cv12" width="300" height="100" style="margin-left:-9%;"></canvas>
+                <canvas id="cv13" width="300" height="100" style="margin-left:-9%;"></canvas>
+            </div>
+        </div>
+
+
+      <div id="row3" style="display:table-row;">
+            <div id="cell20" style="display:table-cell;">
+                <canvas id="cv20" width="300" height="100" style="margin-left:17%;"></canvas>
+                <canvas id="cv21" width="300" height="100" style="margin-left:-9%;"></canvas>
+                <canvas id="cv22" width="300" height="100" style="margin-left:-9%;"></canvas>
+                <canvas id="cv23" width="300" height="100" style="margin-left:-9%;"></canvas>
+            </div>
+        </div>
+
+        <div id="row4" style="display:table-row;">
+            <div id="cell30" style="display:table-cell;">
+                <canvas id="cv30" width="300" height="100" style="margin-left:25.5%;"></canvas>
+                <canvas id="cv31" width="300" height="100" style="margin-left:-9%;"></canvas>
+                <canvas id="cv32" width="300" height="100" style="margin-left:-9%;"></canvas>
+                <canvas id="cv33" width="300" height="100" style="margin-left:-9%;"></canvas>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- <img src="{{ url_for('static', filename='img/smallPegBrown.png') }}" id="swp1" style="position:relative"> -->
+
+  
+
+
+<!--TABLE FOR THE INITIAL PEGS-->
+
+<div style="width:100%">
+<table border=0 style="margin-top:5%; width:100%">
+    <tr>
+        <td class="pegStacks">
+            <img src="{{ url_for('static', filename='img/smallPegBrown.png') }}" id="swp1" class="smallPegs">
+            <img src="{{ url_for('static', filename='img/smallPegBrown.png') }}" id="mwp1" class="mediumPegs">
+            <img src="{{ url_for('static', filename='img/smallPegBrown.png') }}" id="bwp1" class="bigPegs">
+        </td>
+        <td class="pegStacks">
+            <img src="{{ url_for('static', filename='img/smallPegBrown.png') }}" id="swp2" class="smallPegs">
+            <img src="{{ url_for('static', filename='img/smallPegBrown.png') }}" id="mwp2" class="mediumPegs">
+            <img src="{{ url_for('static', filename='img/smallPegBrown.png') }}" id="bwp2" class="bigPegs">
+        </td>
+        <td class="pegStacks">
+            <img src="{{ url_for('static', filename='img/smallPegBrown.png') }}" id="swp3" class="smallPegs">
+            <img src="{{ url_for('static', filename='img/smallPegBrown.png') }}" id="mwp3" class="mediumPegs">
+            <img src="{{ url_for('static', filename='img/smallPegBrown.png') }}" id="bwp3" class="bigPegs">
+        </td>
+        <td class="pegStacks">
+            <img src="{{ url_for('static', filename='img/smallPegBrown.png') }}" id="swp4" class="smallPegs">
+            <img src="{{ url_for('static', filename='img/smallPegBrown.png') }}" id="mwp4" class="mediumPegs">
+            <img src="{{ url_for('static', filename='img/smallPegBrown.png') }}" id="bwp4" class="bigPegs">
+        </td>
+
+        <td style="width:20%; text-align:center; vertical-align:top;">
+        <button  id="play" style="width:100%; height:20%; font-size:240%; margin-bottom:3%">Play Move</button>
+        <button id="newGame" style="width:100%; height:20%; font-size:240%; margin-bottom:3%">New Game</button>
+        <label style="width:100%; height:20%; font-size:120%; color:red"> Game status, who's turn is now etc.</label>
+            
+
+        </td>
+
+        <td class="pegStacks">
+            <img src="{{ url_for('static', filename='img/smallPegBlack.png') }}" id="sbp1" class="smallPegs">
+            <img src="{{ url_for('static', filename='img/smallPegBlack.png') }}" id="mbp1" class="mediumPegs">
+            <img src="{{ url_for('static', filename='img/smallPegBlack.png') }}" id="bbp1" class="bigPegs">
+        </td>
+        <td class="pegStacks">
+            <img src="{{ url_for('static', filename='img/smallPegBlack.png') }}" id="sbp2" class="smallPegs">
+            <img src="{{ url_for('static', filename='img/smallPegBlack.png') }}" id="mbp2" class="mediumPegs">
+            <img src="{{ url_for('static', filename='img/smallPegBlack.png') }}" id="bbp2" class="bigPegs">
+        </td>
+        <td class="pegStacks">
+            <img src="{{ url_for('static', filename='img/smallPegBlack.png') }}" id="sbp3" class="smallPegs">
+            <img src="{{ url_for('static', filename='img/smallPegBlack.png') }}" id="mbp3" class="mediumPegs">
+            <img src="{{ url_for('static', filename='img/smallPegBlack.png') }}" id="bbp3" class="bigPegs">
+        </td>
+        <td class="pegStacks">
+            <img src="{{ url_for('static', filename='img/smallPegBlack.png') }}" id="sbp4" class="smallPegs">
+            <img src="{{ url_for('static', filename='img/smallPegBlack.png') }}" id="mbp4" class="mediumPegs">
+            <img src="{{ url_for('static', filename='img/smallPegBlack.png') }}" id="bbp4" class="bigPegs">
+        </td>
+
+    </tr>
+</table>
+</div>
+
+<div id="credits">
+<u>By Liron Shimrony & Jonatan Shimrony<br>CSC44800 Spring 2014</u>
+</div>
+
+
+
+
+
+    
+ 
+ 
+
+            
+
+	</body>
+</html>

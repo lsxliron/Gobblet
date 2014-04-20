@@ -1,0 +1,32 @@
+.pegStacks
+{
+	width: 10%;
+	text-align: center;
+}
+
+.smallPegs
+{
+	z-index: 10;
+	/*position: absolute;*/
+}
+
+.mediumPegs
+{
+	-webkit-transform: scale(1.2);
+	z-index: 11;
+}
+
+.bigPegs
+{
+	-webkit-transform: scale(1.5);
+	z-index: 12;
+	/*-webkit-filter: contrast(150%);*/
+}
+
+#credits
+{
+	margin-top: 3%;
+	font-size: 200%;
+	width: 100%;
+	text-align: center;
+}
