@@ -155,16 +155,30 @@ $(document).ready(function(){
 
 function animatePeg(square, peg)
 {
-  var offset=50;
+  var y_offset=50;
   var pos = square.position();
   var x = pos.left;
   var y = pos.top;
-  peg.css('position','absolute');
+  var x_offset = 0
 
+
+  //Offset in case of pig beg
   if (peg.attr('id').slice(0,1) == 'b')
-    offset = 65;
-  console.log(offset)
-  peg.animate({'left':x, 'top':y-offset}, {'duration':1000});
+    y_offset = 65;
+
+  if (square.attr('id').slice(-2)%10 == 0)
+  {
+    offsetMultiplier = square.attr('id').slice(-2,-1);
+    x_offset = 100 + (100 * offsetMultiplier)
+  }
+  
+  
+  //Make peg ready to move
+  peg.css('position','absolute');
+  peg.css('left',peg.position().left);
+  peg.css('top',peg.position().top);
+
+  peg.animate({'left':x + x_offset, 'top':y-y_offset}, {'duration':1000});
 
   //Clear selection
   peg.css('opacity',1);

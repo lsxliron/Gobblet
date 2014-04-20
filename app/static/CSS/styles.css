@@ -7,7 +7,7 @@
 .smallPegs
 {
 	z-index: 10;
-	/*position: absolute;*/
+	/*position: relative;*/
 }
 
 .mediumPegs
