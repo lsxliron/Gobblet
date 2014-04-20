@@ -160,6 +160,7 @@ function animatePeg(square, peg)
   var x = pos.left;
   var y = pos.top;
   var x_offset = 0
+  var x_offsetMultiplier = square.attr('id').slice(-2,-1);  //Fixes animation in first column
 
 
   //Offset in case of pig beg
@@ -167,16 +168,15 @@ function animatePeg(square, peg)
     y_offset = 65;
 
   if (square.attr('id').slice(-2)%10 == 0)
-  {
-    offsetMultiplier = square.attr('id').slice(-2,-1);
-    x_offset = 100 + (100 * offsetMultiplier)
-  }
+    x_offset = 100 + (100 * x_offsetMultiplier)
   
   
   //Make peg ready to move
   peg.css('position','absolute');
   peg.css('left',peg.position().left);
   peg.css('top',peg.position().top);
+  
+  
 
   peg.animate({'left':x + x_offset, 'top':y-y_offset}, {'duration':1000});
 
