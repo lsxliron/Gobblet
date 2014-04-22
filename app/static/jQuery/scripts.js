@@ -1,32 +1,28 @@
+
+//vars
+//-----
 //When turn is true: white player turn
 //When turn is false: black player turn
+
 var turn = true; 
+var gameWon = false //Disable board after winning
+var selectedPeg = null;
+var selectedSqare = null;
 
-
-$(document).ready(function(){
-
-
-  //vars
-
-  var selectedPeg = null;
-  var selectedSqare = null;
-  
-  
+$(document).ready(function()
+{
   initBoard();
-
-  
- 
 
   // Changes the opacity of tile when it's clicked
   $("canvas").click(function()
   {
     
     //Set full opacity for all the tiles
-    $("canvas").css('opacity',1);
+    $("canvas").css('opacity', 1);
 
     
     //Mark selected sqare  
-    $(this).css('opacity','0.5');
+    $(this).css('opacity', '0.5');
     selectedSqare = $(this);
     
   });
@@ -36,17 +32,17 @@ $(document).ready(function(){
   //Change the opacity of the selected peg
   $("img").click(function()
   {
-    if (((turn == true) && ($(this).attr('id').slice(1,2) == 'w')) ||
-          ((turn == false) && ($(this).attr('id').slice(1,2) == 'b')))
+    if ((((turn == true) && ($(this).attr('id').slice(1, 2) == 'w')) ||
+              ((turn == false) && ($(this).attr('id').slice(1, 2) == 'b'))) && !(gameWon))
     {
       //Set all pegs to full opacity
       // $("img").css('opacity',1);
-      $("img").css('-webkit-filter','invert(0%)');
+      $("img").css('-webkit-filter', 'invert(0%)');
     
       //Mark selected peg
       selectedPeg = $(this);
       // $(this).css('opacity', 0.8)
-      $(this).css('-webkit-filter','invert(100%)');
+      $(this).css('-webkit-filter', 'invert(100%)');
     }
 
   });
@@ -58,10 +54,17 @@ $(document).ready(function(){
     var old_j;
     var old_i;
     var collidedCanvasID = null;
+
+    //Check that player selected a peg and a destination square
+    if ((selectedPeg == null) || (selectedSqare == null))
+    {
+      alert("Please select a peg and a destination square, then click Play Move.")
+      return
+    }
     
     //Get coordinates of the destination square on the board
     var sqNum = selectedSqare.attr('id').slice(-2);
-    var i=sqNum.slice(0,1);
+    var i=sqNum.slice(0, 1);
     var j=sqNum.slice(-1);
     
     
@@ -71,7 +74,7 @@ $(document).ready(function(){
 
     //Determine if the player place a new peg on the board or changes
     //the position of a peg on the board
-    var colliders_selector = "#"+selectedPeg.attr('id')
+    var colliders_selector = "#" + selectedPeg.attr('id')
     var obstacles_selector = "canvas";
     var hits = $(colliders_selector).collision(obstacles_selector);
 
@@ -85,7 +88,7 @@ $(document).ready(function(){
     {
       newPegOnBoard = false;
       collidedCanvasID = hits[hits.length-1].id;
-      old_i = collidedCanvasID.slice(-2,-1)
+      old_i = collidedCanvasID.slice(-2, -1)
       old_j = collidedCanvasID.slice(-1);
       
     }
@@ -93,12 +96,12 @@ $(document).ready(function(){
     //Place new peg on the board
     if (newPegOnBoard)
     {
-      console.log("Place peg " + pegID + " to cv"+i+j);
+      console.log("Place peg " + pegID + " to cv" + i + j);
       $.ajax(
       {
         url:'/_place_new_peg_on_board/',
         method:'POST',
-        data: {square_i: selectedSqare.attr('id').slice(-2,-1),
+        data: {square_i: selectedSqare.attr('id').slice(-2, -1),
                square_j: selectedSqare.attr('id').slice(-1),
                peg:selectedPeg.attr('id')},
       
@@ -107,17 +110,20 @@ $(document).ready(function(){
         {
           console.log(turn);
           if (data.result.toString() == "true")
-            animatePeg(selectedSqare,selectedPeg);
+            animatePeg(selectedSqare, selectedPeg);
 
           else
-            alert('Illegal move');
+          {
+            $("#status").attr('class','alert alert-danger')
+            $("#status").text("Illegal Move!")
+          }
+            
 
           if (data.winner.toString() == "true")
-          // {
-            alert("WINNER");
-
-            // $('status').text
-          // }
+          {
+            $("#status").text(getCurrentTurnColor().toString() + " won the game.")
+            gameWon = true
+          }
       }});//AJAX END
 
 
@@ -127,12 +133,12 @@ $(document).ready(function(){
     //Change position of existsing peg on the board
     else
     {
-      console.log("Move "+pegID +" form cv" +old_i+old_j + " to cv"+i+j);
+      console.log("Move " + pegID  + " form cv" + old_i + old_j + " to cv" + i + j);
       $.ajax(
       {
         url:'/_reposition_peg_on_board/',
         method:'POST',
-        data: {square_new_i: selectedSqare.attr('id').slice(-2,-1),
+        data: {square_new_i: selectedSqare.attr('id').slice(-2, -1),
                square_new_j: selectedSqare.attr('id').slice(-1),
                square_old_i: old_i,
                square_old_j: old_j},//OLD SQUARE IS NOT PRESENT SINCE WE MOVE THE TOP PEG
@@ -146,7 +152,11 @@ $(document).ready(function(){
             alert('Illegal move');
 
           if (data.winner.toString() == "true")
-            alert("WINNER");
+          {
+            $("#status").text(getCurrentTurnColor().toString() + " won the game.")
+            gameWon = true
+          }
+
       }});//AJAX END
     }
   });
@@ -170,43 +180,41 @@ $(document).ready(function(){
             location.reload();
         }});//AJAX END
     }
-
   });
-
 });
 
 
 function animatePeg(square, peg)
 {
-  var y_offset=50;
+  var y_offset = 50;
   var pos = square.position();
   var x = pos.left;
   var y = pos.top;
   var x_offset = 0;
-  var x_offsetMultiplier = square.attr('id').slice(-2,-1);  //Fixes animation in first column
+  var x_offsetMultiplier = square.attr('id').slice(-2, -1);  //Fixes animation in first column
 
 
   //Offset in case of pig beg
-  if (peg.attr('id').slice(0,1) == 'b')
+  if (peg.attr('id').slice(0, 1) == 'b')
     y_offset = 65;
 
-  if (square.attr('id').slice(-2)%10 == 0)
+  if (square.attr('id').slice(-2) % 10 == 0)
     x_offset = 100 + (100 * x_offsetMultiplier);
   
   
   //Make peg ready to move
-  peg.css('position','absolute');
-  peg.css('left',peg.position().left);
-  peg.css('top',peg.position().top);
+  peg.css('position', 'absolute');
+  peg.css('left', peg.position().left);
+  peg.css('top', peg.position().top);
   
   
 
   peg.animate({'left':x + x_offset, 'top':y-y_offset}, {'duration':1000});
 
   //Clear selection
-  peg.css('opacity',1);
+  peg.css('opacity', 1);
   peg.css('-webkit-filter','invert(0%)');
-  square.css('opacity',1);
+  square.css('opacity', 1);
   
   //Change status label content to say which player is is playing next
   turn = !(turn);
@@ -216,8 +224,12 @@ function animatePeg(square, peg)
     turnColor = "Brown";
   else
     turnColor = "Black";
+  $("#status").attr('class','alert alert-success')
+  $('#status').text(getCurrentTurnColor() + " player turn.")
 
-  $('#status').text(turnColor + " player turn.")
+  //Reset variables
+  selectedSqare = null;
+  selectedPeg = null;
 
 }
 
@@ -257,4 +269,12 @@ function createParallelogram(canvasID, color)
   canvas.lineTo(300, 100);
   canvas.lineTo(100, 100);
   canvas.fill()
+}
+
+function getCurrentTurnColor()
+{
+  if (turn == true)
+    return "Brown"
+  else
+    return "Black"
 }

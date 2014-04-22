@@ -5,7 +5,12 @@
     	<script src="{{ url_for('static', filename='jQuery/jquery-2.1.0.js')}}" type="text/javascript"></script>
         <script src="{{ url_for('static', filename='jQuery/scripts.js')}}" type="text/javascript"></script>
         <script src="{{ url_for('static', filename='jQuery/jquerycollision1.0.2/jquery-collision.js')}}" type="text/javascript"></script>
+        
         <link rel="stylesheet" href="{{url_for('static',filename='CSS/styles.css') }}")>
+        <link rel="stylesheet" href="{{url_for('static', filename='bootstrap-3.1.1-dist/css/bootstrap-theme.min.css') }}">
+        <script src="{{ url_for('static', filename='jQuery/bootbox.js')}}" type="text/javascript"></script>
+
+
 	</head>
 
 	<body>
@@ -91,7 +96,8 @@
         <td style="width:20%; text-align:center; vertical-align:top;">
         <button  id="play" style="width:100%; height:20%; font-size:240%; margin-bottom:3%">Play Move</button>
         <button id="newGame" style="width:100%; height:20%; font-size:240%; margin-bottom:3%">New Game</button>
-        <label id="status" style="width:100%; height:20%; font-size:120%; color:red"> Brown player Starts.</label>
+        <!-- <label id="status" style="width:100%; height:20%; font-size:120%; color:red"> Brown player Starts.</label> -->
+        <div id="status" class="alert alert-success" style=" text-align:center; ">Brown player turn</div>
             
 
         </td>
