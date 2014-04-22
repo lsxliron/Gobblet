@@ -163,6 +163,15 @@ class Board(object):
 
 
 	def check_winner(self):
+		"""
+		Returns true if there exist a winner or false otherwise
+		"""
 		column_winner = self.winner_col()
 		row_winner = self.winner_row()
 		return column_winner or row_winner
+
+	def reset(self):
+		"""
+		Returns an empty board
+		"""
+		self.__init__();

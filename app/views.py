@@ -100,7 +100,8 @@ def makeMove():
 	'''
 	add check winner and return with json to jquery
 	'''
-	return jsonify(result=result)
+	winner = mainBoard.check_winner()
+	return jsonify(result=result, winner=winner)
 	
 	
 
@@ -115,11 +116,13 @@ def change_peg_position():
 	#Make a move
 	result = mainBoard.move_peg_on_board(old_i_position,old_j_position, new_i_position, new_j_position)
 	print mainBoard
-	'''
-	add check winner and return with json to jquery
-	'''
-	return jsonify(result=result)
+	winner = mainBoard.check_winner()
+	return jsonify(result=result, winner=winner)
 
 
-	
+@app.route('/_reset_board/', methods=['POST'])
+def clear_board():
+	mainBoard.reset()
+	print mainBoard
+	return "true"
 	

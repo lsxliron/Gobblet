@@ -1,3 +1,8 @@
+//When turn is true: white player turn
+//When turn is false: black player turn
+var turn = true; 
+
+
 $(document).ready(function(){
 
 
@@ -5,14 +10,16 @@ $(document).ready(function(){
 
   var selectedPeg = null;
   var selectedSqare = null;
-
+  
+  
   initBoard();
 
   
  
 
   // Changes the opacity of tile when it's clicked
-  $("canvas").click(function(){
+  $("canvas").click(function()
+  {
     
     //Set full opacity for all the tiles
     $("canvas").css('opacity',1);
@@ -29,24 +36,28 @@ $(document).ready(function(){
   //Change the opacity of the selected peg
   $("img").click(function()
   {
-    //Set all pegs to full opacity
-    // $("img").css('opacity',1);
-    $("img").css('-webkit-filter','invert(0%)');
+    if (((turn == true) && ($(this).attr('id').slice(1,2) == 'w')) ||
+          ((turn == false) && ($(this).attr('id').slice(1,2) == 'b')))
+    {
+      //Set all pegs to full opacity
+      // $("img").css('opacity',1);
+      $("img").css('-webkit-filter','invert(0%)');
     
-    //Mark selected peg
-    selectedPeg = $(this);
-    // $(this).css('opacity', 0.8)
-    $(this).css('-webkit-filter','invert(100%)');
+      //Mark selected peg
+      selectedPeg = $(this);
+      // $(this).css('opacity', 0.8)
+      $(this).css('-webkit-filter','invert(100%)');
+    }
 
   });
 
 
-  $("#play").click(function(){
-
+  $("#play").click(function()
+  {
     var newPegOnBoard;
     var old_j;
     var old_i;
-    var collidedCanvasID=null
+    var collidedCanvasID = null;
     
     //Get coordinates of the destination square on the board
     var sqNum = selectedSqare.attr('id').slice(-2);
@@ -56,7 +67,7 @@ $(document).ready(function(){
     
     //Get peg data
     var pegID = selectedPeg.attr('id');
-    var pegClass = selectedPeg.attr('class')
+    var pegClass = selectedPeg.attr('class');
 
     //Determine if the player place a new peg on the board or changes
     //the position of a peg on the board
@@ -66,21 +77,17 @@ $(document).ready(function(){
 
     //Case we have no colisions- place new peg on the board
     if (hits.length == 0)
-    {
       newPegOnBoard = true;
-      
-
-    }
 
     //We have collisions- player wants to move an existing peg on the board
     //Get the old square coordinates and the new square coordinates
     else
     {
       newPegOnBoard = false;
-      collidedCanvasID = hits[hits.length-1].id
+      collidedCanvasID = hits[hits.length-1].id;
       old_i = collidedCanvasID.slice(-2,-1)
-      old_j = collidedCanvasID.slice(-1)
-      animatePeg(selectedSqare,selectedPeg)
+      old_j = collidedCanvasID.slice(-1);
+      
     }
 
     //Place new peg on the board
@@ -98,12 +105,21 @@ $(document).ready(function(){
       
         success: function(data)
         {
-          console.log("Back from python");
-          if(data.result.toString() == "true")
-            animatePeg(selectedSqare,selectedPeg)
+          console.log(turn);
+          if (data.result.toString() == "true")
+            animatePeg(selectedSqare,selectedPeg);
+
           else
-            alert('Illegal move')
+            alert('Illegal move');
+
+          if (data.winner.toString() == "true")
+          // {
+            alert("WINNER");
+
+            // $('status').text
+          // }
       }});//AJAX END
+
 
      }
     
@@ -123,58 +139,39 @@ $(document).ready(function(){
       
       
         success: function(data)
-        {
-          console.log("Back from python");
-          
+        {      
           if(data.result.toString() == "true")
-            animatePeg(selectedSqare,selectedPeg)
+            animatePeg(selectedSqare, selectedPeg);
           else
-            alert('Illegal move')
+            alert('Illegal move');
+
+          if (data.winner.toString() == "true")
+            alert("WINNER");
       }});//AJAX END
     }
   });
 
 
-//GET THE COLISIONS TO DECIDE IF TO USE MAKE MOVE OR MOVE PEG ON THE BOARD
-  $("#newGame").click(function(){
-    //CREATE AJAX IN ORDER TO RESET BOARD IN PYTHON AND REFRESH PAGE
+  $("#newGame").click(function()
+  {
+    //Reset the board and refresh page
+    var answer = confirm("Are you sure you want to reset the game?");
+    if (answer)
+    {
+      $.ajax(
+        {
+          url:'/_reset_board/',
+          method:'POST',
+          data: {},
+        
+        
+          success: function(data)
+          {
+            location.reload();
+        }});//AJAX END
+    }
 
   });
-  
-  
-
-
-
-
-
-
-
-  // $("#t1").click(function(){
-  //   el="#cv13"
-  //   var pos = $(el).position();
-  //   var w  = $(el).width();
-    
-    
-  //   c1 = pos.left
-  //   c2 = pos.top;
-  //   $(this).animate({'left':c1, 'top':c2-50}, {'duration':1000});
-
-    
-  // });
-
-  // $("#t2").click(function(){
-  //   el="#cv9"
-  //   var pos = $(el).position();
-  //   var w  = $(el).width();
-    
-  //   c1 = pos.left
-  //   c2 = pos.top;
-  //   $(this).animate({'left':c1, 'top':c2-50}, {'duration':1000});
-
-    
-  // });
-  
-
 
 });
 
@@ -185,7 +182,7 @@ function animatePeg(square, peg)
   var pos = square.position();
   var x = pos.left;
   var y = pos.top;
-  var x_offset = 0
+  var x_offset = 0;
   var x_offsetMultiplier = square.attr('id').slice(-2,-1);  //Fixes animation in first column
 
 
@@ -194,7 +191,7 @@ function animatePeg(square, peg)
     y_offset = 65;
 
   if (square.attr('id').slice(-2)%10 == 0)
-    x_offset = 100 + (100 * x_offsetMultiplier)
+    x_offset = 100 + (100 * x_offsetMultiplier);
   
   
   //Make peg ready to move
@@ -209,7 +206,19 @@ function animatePeg(square, peg)
   //Clear selection
   peg.css('opacity',1);
   peg.css('-webkit-filter','invert(0%)');
-  square.css('opacity',1)
+  square.css('opacity',1);
+  
+  //Change status label content to say which player is is playing next
+  turn = !(turn);
+  
+  var turnColor = "";
+  if (turn)
+    turnColor = "Brown";
+  else
+    turnColor = "Black";
+
+  $('#status').text(turnColor + " player turn.")
+
 }
 
 
@@ -234,7 +243,6 @@ function initBoard()
       var temp = color1;
       color1 = color2;  
       color2 = temp; 
-
   }
 
 }
