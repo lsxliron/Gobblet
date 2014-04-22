@@ -160,3 +160,9 @@ class Board(object):
 			exists_empty_squares=False
 
 		return False
+
+
+	def check_winner(self):
+		column_winner = self.winner_col()
+		row_winner = self.winner_row()
+		return column_winner or row_winner

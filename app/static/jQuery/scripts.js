@@ -46,6 +46,7 @@ $(document).ready(function(){
     var newPegOnBoard;
     var old_j;
     var old_i;
+    var collidedCanvasID=null
     
     //Get coordinates of the destination square on the board
     var sqNum = selectedSqare.attr('id').slice(-2);
@@ -61,57 +62,82 @@ $(document).ready(function(){
     //the position of a peg on the board
     var colliders_selector = "#"+selectedPeg.attr('id')
     var obstacles_selector = "canvas";
-    var hits = $(colliders_selector).collision(obstacles_selector)
+    var hits = $(colliders_selector).collision(obstacles_selector);
 
     //Case we have no colisions- place new peg on the board
     if (hits.length == 0)
     {
       newPegOnBoard = true;
-      animatePeg(selectedSqare,selectedPeg)
+      
 
     }
 
     //We have collisions- player wants to move an existing peg on the board
+    //Get the old square coordinates and the new square coordinates
     else
     {
-      for (var t=0; t<hits.length; t++)
-        console.log(hits[t])
       newPegOnBoard = false;
-      var collidedCanvasID = hits[hits.length-1].id
-      old_i = collidedCanvasID.slice(0,1)
+      collidedCanvasID = hits[hits.length-1].id
+      old_i = collidedCanvasID.slice(-2,-1)
       old_j = collidedCanvasID.slice(-1)
       animatePeg(selectedSqare,selectedPeg)
     }
 
-
+    //Place new peg on the board
     if (newPegOnBoard)
     {
-      console.log("Place peg " + pegID + " on cv"+i+j);
+      console.log("Place peg " + pegID + " to cv"+i+j);
+      $.ajax(
+      {
+        url:'/_place_new_peg_on_board/',
+        method:'POST',
+        data: {square_i: selectedSqare.attr('id').slice(-2,-1),
+               square_j: selectedSqare.attr('id').slice(-1),
+               peg:selectedPeg.attr('id')},
+      
+      
+        success: function(data)
+        {
+          console.log("Back from python");
+          if(data.result.toString() == "true")
+            animatePeg(selectedSqare,selectedPeg)
+          else
+            alert('Illegal move')
+      }});//AJAX END
 
-     
-    }
+     }
+    
 
+    //Change position of existsing peg on the board
     else
-      console.log("Move "+pegID +" form cv" +old_j+old_j + " to cv"+i+j);
-    
-    
-
-
-
+    {
+      console.log("Move "+pegID +" form cv" +old_i+old_j + " to cv"+i+j);
+      $.ajax(
+      {
+        url:'/_reposition_peg_on_board/',
+        method:'POST',
+        data: {square_new_i: selectedSqare.attr('id').slice(-2,-1),
+               square_new_j: selectedSqare.attr('id').slice(-1),
+               square_old_i: old_i,
+               square_old_j: old_j},//OLD SQUARE IS NOT PRESENT SINCE WE MOVE THE TOP PEG
+      
+      
+        success: function(data)
+        {
+          console.log("Back from python");
+          
+          if(data.result.toString() == "true")
+            animatePeg(selectedSqare,selectedPeg)
+          else
+            alert('Illegal move')
+      }});//AJAX END
+    }
   });
 
 
 //GET THE COLISIONS TO DECIDE IF TO USE MAKE MOVE OR MOVE PEG ON THE BOARD
   $("#newGame").click(function(){
-    var colliders_selector = ".mediumPegs";
-    var obstacles_selector = "canvas";
-    var hits = $(colliders_selector).collision(obstacles_selector)
-    for (var i=0; i<hits.length; i++)
-    {
-      console.log($(hits[i]).attr('id'))
-    }
-    console.log("SSS")
-    alert(hits.length)
+    //CREATE AJAX IN ORDER TO RESET BOARD IN PYTHON AND REFRESH PAGE
 
   });
   
