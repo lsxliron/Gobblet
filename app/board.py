@@ -37,6 +37,12 @@ class Board(object):
 		if self.grid[i][j].full():
 			return False
 
+		#Make sure the pegs are different colors (no white on white/ black on black)
+		top_gobblet_index = self.find_top_peg_on_square(i, j)
+		if self.grid[i][j].stack[top_gobblet_index].color == gb.color:
+			return False
+
+
 		#First peg in the square- occupy if it's free'
 		elif self.grid[i][j].empty():
 			self.grid[i][j].stack[0] = gb
