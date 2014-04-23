@@ -146,8 +146,15 @@ $(document).ready(function()
       
         success: function(data)
         {      
-          if(data.result.toString() == "true")
+          if(data.result.toString() == "1")
             animatePeg(selectedSqare, selectedPeg);
+          else if (data.result.toString() == "2")
+          {
+            liftPeg(selectedPeg, selectedSqare);
+            turn = !(turn)
+            gameWon = true;
+            $("#status").text(getCurrentTurnColor().toString() + " won the game.")
+          }
           else
             alert('Illegal move');
 
@@ -277,4 +284,9 @@ function getCurrentTurnColor()
     return "Brown"
   else
     return "Black"
+}
+
+function liftPeg(peg, square)
+{
+  peg.animate({'top':+10}, {'duration':1000});
 }

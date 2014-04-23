@@ -62,9 +62,29 @@ class Board(object):
 		
 
 
+	# def move_peg_on_board(self, old_i, old_j, new_i, new_j):
+	# 	"""
+	# 	Moves peg from (old_i, old_j) to (new_i, new_j) if the move is legal
+	# 	"""
+	# 	peg_to_move_index = self.find_top_peg_on_square(old_i,old_j)
+	# 	#Copy of the gobblet to move
+	# 	if peg_to_move_index != -1:
+	# 		new_gobblet = Gobblet(-1,-1,self.grid[old_i][old_j].stack[peg_to_move_index])
+		
+	# 		if self.place_gobblet_on_sqaure(new_i, new_j, new_gobblet):
+	# 			#Remove the gobblet from the old location
+	# 			self.grid[old_i][old_j].stack[peg_to_move_index]=Gobblet()
+	# 			return True
+	# 	return False
+
 	def move_peg_on_board(self, old_i, old_j, new_i, new_j):
 		"""
 		Moves peg from (old_i, old_j) to (new_i, new_j) if the move is legal
+		Returns: 
+			0 for illegal
+			1 for legal move
+			2 when player reveal opponent peg and opponent wins
+
 		"""
 		peg_to_move_index = self.find_top_peg_on_square(old_i,old_j)
 		#Copy of the gobblet to move
@@ -74,8 +94,13 @@ class Board(object):
 			if self.place_gobblet_on_sqaure(new_i, new_j, new_gobblet):
 				#Remove the gobblet from the old location
 				self.grid[old_i][old_j].stack[peg_to_move_index]=Gobblet()
-				return True
-		return False
+
+				#if player reveal opponent peg and opponent wins
+				if self.check_winner():
+					return 2
+				return 1
+		
+		return 0
 
 
 
