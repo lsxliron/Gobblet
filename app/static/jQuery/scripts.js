@@ -148,6 +148,8 @@ $(document).ready(function()
         {      
           if(data.result.toString() == "1")
             animatePeg(selectedSqare, selectedPeg);
+
+          //Case that the player revealed opponent winning row/ col
           else if (data.result.toString() == "2")
           {
             liftPeg(selectedPeg, selectedSqare);

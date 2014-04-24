@@ -4,6 +4,12 @@
 	text-align: center;
 }
 
+.tinyPegs
+{
+	-webkit-transform: scale(0.8);
+	z-index: 9;
+}
+
 .smallPegs
 {
 	z-index: 10;
@@ -18,7 +24,7 @@
 
 .bigPegs
 {
-	-webkit-transform: scale(1.5);
+	-webkit-transform: scale(1.4);
 	z-index: 12;
 	/*-webkit-filter: contrast(150%);*/
 }

@@ -6,7 +6,7 @@ class Square(object):
 
 	def __init__(self):
 		self.stack = list()
-		for i in range(0,3):
+		for i in range(0,4):
 			self.stack.append(Gobblet())
 
 	def __str__(self):
@@ -16,7 +16,7 @@ class Square(object):
 		return str(self.stack)
 
 	def full(self):
-		for i in range(0,3):
+		for i in range(0,4):
 				if self.stack[i].dummy():
 					return False
 		return True

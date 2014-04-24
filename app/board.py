@@ -1,6 +1,7 @@
 from square import *
 from gobblet import *
-import pdb
+from collections import Counter
+
 
 
 class Board(object):
@@ -50,7 +51,7 @@ class Board(object):
 
 		else:
 			#Find the next level to place the peg
-			for k in range(1,3):
+			for k in range(1,4):
 
 				if self.grid[i][j].stack[k].dummy():
 					#Check that the spot is valid
@@ -120,7 +121,7 @@ class Board(object):
 		if self.grid[i][j].empty():
 			return -1
 
-		for k in range(0,3):
+		for k in range(0,4):
 			if not self.grid[i][j].stack[k].dummy():
 				top = k
 
@@ -206,3 +207,65 @@ class Board(object):
 		Returns an empty board
 		"""
 		self.__init__();
+
+
+	def calculate_heuristic(self):
+		"""
+		Calculate the heuristic value (hv)
+		The hv is the number of possible winning rows or columns for the player
+		"""
+		hv = 0;
+		col = list()
+		row=list()
+
+		#Checking possible winning cols
+		for i in range(0,4):
+			#Get colors
+			count_dict=None
+			first_top_gobblet_index = self.find_top_peg_on_square(0,i)
+			second_top_gobblet_index = self.find_top_peg_on_square(1,i)
+			third_top_gobblet_index = self.find_top_peg_on_square(2,i)
+			fourth_top_gobblet_index = self.find_top_peg_on_square(3,i)
+
+
+			col.append(self.grid[0][i].stack[first_top_gobblet_index].color)
+			col.append(self.grid[1][i].stack[second_top_gobblet_index].color)
+			col.append(self.grid[2][i].stack[third_top_gobblet_index].color)
+			col.append(self.grid[3][i].stack[fourth_top_gobblet_index].color)
+
+
+			count_dict = Counter(col) #perform the count
+
+			#if the column is possible to be winning increase hv
+			if not count_dict.has_key('Black') and count_dict.has_key('White'):
+				hv += 1
+			
+			col = list()	#reset list
+
+		#Checking possible winning cols
+		for i in range(0,4):
+			count_dict=dict()
+			first_top_gobblet_index = self.find_top_peg_on_square(i, 0)
+			second_top_gobblet_index = self.find_top_peg_on_square(i, 1)
+			third_top_gobblet_index = self.find_top_peg_on_square(i, 2)
+			fourth_top_gobblet_index = self.find_top_peg_on_square(i, 3)
+
+
+			row.append(self.grid[i][0].stack[first_top_gobblet_index].color)
+			row.append(self.grid[i][1].stack[second_top_gobblet_index].color)
+			row.append(self.grid[i][2].stack[third_top_gobblet_index].color)
+			row.append(self.grid[i][3].stack[fourth_top_gobblet_index].color)
+
+
+			count_dict = Counter(row)	#perform the count
+
+			#if the row is possible to be winning increase hv
+			if not count_dict.has_key('Black') and count_dict.has_key('White'):
+				hv += 1
+
+			row = list()	#reset list
+			
+
+
+		return hv
+

@@ -10,76 +10,91 @@ Create pegs and board
 mainBoard = Board()
 
 
+#Tiny white peg
+twp1 = Gobblet("White", 1);
+twp2 = Gobblet("White", 1);
+twp3 = Gobblet("White", 1);
+
 #Small white peg
-swp1 = Gobblet("White", 1);
-swp2 = Gobblet("White", 1);
-swp3 = Gobblet("White", 1);
-swp4 = Gobblet("White", 1);
+swp1 = Gobblet("White", 2);
+swp2 = Gobblet("White", 2);
+swp3 = Gobblet("White", 2);
+
 
 #Medium white peg
-mwp1 = Gobblet("White", 2);
-mwp2 = Gobblet("White", 2);
-mwp3 = Gobblet("White", 2);
-mwp4 = Gobblet("White", 2);
+mwp1 = Gobblet("White", 3);
+mwp2 = Gobblet("White", 3);
+mwp3 = Gobblet("White", 3);
 
 #Big white peg
-bwp1 = Gobblet("White", 3);
-bwp2 = Gobblet("White", 3);
-bwp3 = Gobblet("White", 3);
-bwp4 = Gobblet("White", 3);
+bwp1 = Gobblet("White", 4);
+bwp2 = Gobblet("White", 4);
+bwp3 = Gobblet("White", 4);
+
+
+#Tiny black peg
+tbp1 = Gobblet("Black", 1);
+tbp2 = Gobblet("Black", 1);
+tbp3 = Gobblet("Black", 1);
+
 
 #Small black peg
-sbp1 = Gobblet("Black", 1);
-sbp2 = Gobblet("Black", 1);
-sbp3 = Gobblet("Black", 1);
-sbp4 = Gobblet("Black", 1);
+sbp1 = Gobblet("Black", 2);
+sbp2 = Gobblet("Black", 2);
+sbp3 = Gobblet("Black", 2);
+
 
 #Medium black peg
-mbp1 = Gobblet("Black", 2);
-mbp2 = Gobblet("Black", 2);
-mbp3 = Gobblet("Black", 2);
-mbp4 = Gobblet("Black", 2);
+mbp1 = Gobblet("Black", 3);
+mbp2 = Gobblet("Black", 3);
+mbp3 = Gobblet("Black", 3);
 
 #Big black peg
-bbp1 = Gobblet("Black", 3);
-bbp2 = Gobblet("Black", 3);
-bbp3 = Gobblet("Black", 3);
-bbp4 = Gobblet("Black", 3);
+bbp1 = Gobblet("Black", 4);
+bbp2 = Gobblet("Black", 4);
+bbp3 = Gobblet("Black", 4);
 
 '''
 PEGS DICTIONARY
 '''
 pd = dict()
 
+pd['twp1']=twp1
+pd['twp2']=twp2
+pd['twp3']=twp3
+
+
 pd['swp1']=swp1
 pd['swp2']=swp2
 pd['swp3']=swp3
-pd['swp4']=swp4
 
 pd['mwp1']=mwp1
 pd['mwp2']=mwp2
 pd['mwp3']=mwp3
-pd['mwp4']=mwp4
+
 
 pd['bwp1']=bwp1
 pd['bwp2']=bwp2
 pd['bwp3']=bwp3
-pd['bwp4']=bwp4
+
+pd['tbp1']=tbp1
+pd['tbp2']=tbp2
+pd['tbp3']=tbp3
 
 pd['sbp1']=sbp1
 pd['sbp2']=sbp2
 pd['sbp3']=sbp3
-pd['sbp4']=sbp4
+
 
 pd['mbp1']=mbp1
 pd['mbp2']=mbp2
 pd['mbp3']=mbp3
-pd['mbp4']=mbp4
+
 
 pd['bbp1']=bbp1
 pd['bbp2']=bbp2
 pd['bbp3']=bbp3
-pd['bbp4']=bbp4
+
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
