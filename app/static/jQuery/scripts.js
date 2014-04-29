@@ -237,9 +237,15 @@ function animatePeg(square, peg)
   $("#status").attr('class','alert alert-success')
   $('#status').text(getCurrentTurnColor() + " player turn.")
 
+  //remove CSS propertis
+  peg.css('margin-top','auto');
+  peg.css('margin-left','auto');
+
   //Reset variables
   selectedSqare = null;
   selectedPeg = null;
+
+
 
 }
 
