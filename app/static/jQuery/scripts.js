@@ -121,7 +121,8 @@ $(document).ready(function()
 
           if (data.winner.toString() == "true")
           {
-            $("#status").text(getCurrentTurnColor().toString() + " won the game.")
+            // $("#status").text(getCurrentTurnColor().toString() + " won the game.")
+            $("#status").text(flipColor().toString() + " won the game.")
             gameWon = true
           }
       }});//AJAX END
@@ -155,14 +156,14 @@ $(document).ready(function()
             liftPeg(selectedPeg, selectedSqare);
             turn = !(turn)
             gameWon = true;
-            $("#status").text(getCurrentTurnColor().toString() + " won the game.")
+            $("#status").text(flipColor().toString() + " won the game.")
           }
           else
             alert('Illegal move');
 
           if (data.winner.toString() == "true")
           {
-            $("#status").text(getCurrentTurnColor().toString() + " won the game.")
+            $("#status").text(flipColor().toString() + " won the game.")
             gameWon = true
           }
 
@@ -283,6 +284,14 @@ function createParallelogram(canvasID, color)
 function getCurrentTurnColor()
 {
   if (turn == true)
+    return "Brown"
+  else
+    return "Black"
+}
+
+function flipColor()
+{
+  if (turn == false)
     return "Brown"
   else
     return "Black"

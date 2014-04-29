@@ -28,20 +28,62 @@ class Board(object):
 			output += "\n"
 		return output
 
+	def three_in_a_row(self,i,j, gb):
+		"""
+		returns true if the opponent can make a winner move
+		"""
+
+		#Get the opponent color
+		if gb.color == "White":
+			color = "Black"
+		else:
+			color = "White"
+
+		row_gobblet_list = list()
+		col_gobblet_list = list()
+
+		#get column gobblets
+		col_gobblet_list.append(self.grid[i][0].stack[self.find_top_peg_on_square(i,0)].color)
+		col_gobblet_list.append(self.grid[i][1].stack[self.find_top_peg_on_square(i,1)].color)
+		col_gobblet_list.append(self.grid[i][2].stack[self.find_top_peg_on_square(i,2)].color)
+		col_gobblet_list.append(self.grid[i][3].stack[self.find_top_peg_on_square(i,3)].color)
+
+		#get row gobblets
+		row_gobblet_list.append(self.grid[0][j].stack[self.find_top_peg_on_square(0,j)].color)
+		row_gobblet_list.append(self.grid[1][j].stack[self.find_top_peg_on_square(1,j)].color)
+		row_gobblet_list.append(self.grid[2][j].stack[self.find_top_peg_on_square(2,j)].color)
+		row_gobblet_list.append(self.grid[3][j].stack[self.find_top_peg_on_square(3,j)].color)
+
+
+		if col_gobblet_list.count(color) == 3 or row_gobblet_list.count(color) == 3:
+			return True
+
+		return False
 
 	def place_gobblet_on_sqaure(self, i, j, gb):
 		"""
 		Place a peg on the board if the move is legal
 		"""
 		
-		#Make sure the square is not empty
+		#Legal move- placing a new peg on an occupied square
+		#when opponent has 3 pegs in a row
+		if self.three_in_a_row(i,j,gb):
+			return True
+
+		#Illega move- trying to place a new gobblet on an 
+		#occupied square
+		if not self.grid[i][j].empty():
+			return False
+
+
+		#Make sure the square is not full
 		if self.grid[i][j].full():
 			return False
 
-		#Make sure the pegs are different colors (no white on white/ black on black)
-		top_gobblet_index = self.find_top_peg_on_square(i, j)
-		if self.grid[i][j].stack[top_gobblet_index].color == gb.color:
-			return False
+		# Make sure the pegs are different colors (no white on white/ black on black)
+		# top_gobblet_index = self.find_top_peg_on_square(i, j)
+		# if self.grid[i][j].stack[top_gobblet_index].color == gb.color:
+			# return False
 
 
 		#First peg in the square- occupy if it's free'
@@ -64,6 +106,10 @@ class Board(object):
 					else:
 						return False
 		return False
+
+
+	
+
 
 
 		
@@ -108,6 +154,9 @@ class Board(object):
 				return 1
 		
 		return 0
+
+	
+
 
 
 
@@ -193,6 +242,31 @@ class Board(object):
 
 		return False
 
+	def winner_diag(self):
+		"""
+		Returns true if a player wins diagonally and false otherwise
+		"""
+		colors_list = list()
+		
+		#First diagonal
+		for i in range(0,4):
+			colors_list.append(self.grid[i][i].stack[self.find_top_peg_on_square(i,i)].color)
+		
+		if colors_list[0] != -1 and colors_list.count(colors_list[0]) == 4:
+			return True
+
+		#second diagonal
+		colors_list=list()
+		k = 3
+		for i in range(0,4):
+			colors_list.append(self.grid[k][i].stack[self.find_top_peg_on_square(k,i)].color)
+			k -= 1
+
+		if colors_list[0] != -1 and colors_list.count(colors_list[0]) == 4:
+			return True
+
+		return False
+
 
 	def check_winner(self):
 		"""
@@ -200,7 +274,8 @@ class Board(object):
 		"""
 		column_winner = self.winner_col()
 		row_winner = self.winner_row()
-		return column_winner or row_winner
+		diag_winner = self.winner_diag()
+		return column_winner or row_winner or diag_winner
 
 	def reset(self):
 		"""
