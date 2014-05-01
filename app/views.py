@@ -2,6 +2,7 @@ from flask import render_template, url_for, request, jsonify
 from app import app
 import pdb
 from board import *
+from gameplay import *
 
 
 """
@@ -95,6 +96,15 @@ pd['bbp1']=bbp1
 pd['bbp2']=bbp2
 pd['bbp3']=bbp3
 
+ob_pd = dict()
+not_ob_pd = dict()
+
+for key in pd.keys():
+	if pd[key].color == 'Black':
+		not_ob_pd[key] = pd[key]
+
+print not_ob_pd
+
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -107,15 +117,33 @@ def makeMove():
 	i_position = int(request.form['square_i'])
 	j_position = int(request.form['square_j'])
 	peg_name = str(request.form['peg'])
-	
-	#Make a move
-	result = mainBoard.place_gobblet_on_sqaure(i_position, j_position, pd[peg_name]);
+	player = str(request.form['player'])
+	pdb.set_trace()
+	if player == 'Black':
+		print 'PC TURN!!!!!'
+		result = play(mainBoard, pd, ob_pd, not_ob_pd)
+
+	'''CREATE A NEW VIEW API WITH AJAX FROM SCRIPTS FOR THE AI'''
+	else:
+		#Make a move
+		result = mainBoard.place_gobblet_on_sqaure(i_position, j_position, pd[peg_name]);
 
 	print mainBoard
-	'''
-	add check winner and return with json to jquery
-	'''
+
+	#If move is valid, add peg to on_board dictionary (ob_pd)
+	if result and player=='Black':
+		print "__________________________________________________"
+		print "NOT ON BOARD DICTIONARY"
+		print not_ob_pd
+		print "__________________________________________________"
+		ob_pd[peg_name]=pd[peg_name]
+
+		#Remove on board peg from not_on_board dictionay (not_ob_pd)
+		not_ob_pd.pop(peg_name)
+
+	#Check for a winner
 	winner = mainBoard.check_winner()
+	print ob_pd
 	return jsonify(result=result, winner=winner)
 	
 	
@@ -127,6 +155,8 @@ def change_peg_position():
 	old_j_position = int(request.form['square_old_j'])
 	new_i_position = int(request.form['square_new_i'])
 	new_j_position = int(request.form['square_new_j'])
+	
+
 	
 	#Make a move
 	result = mainBoard.move_peg_on_board(old_i_position,old_j_position, new_i_position, new_j_position)

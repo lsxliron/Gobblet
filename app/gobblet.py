@@ -11,6 +11,8 @@ class Gobblet(object):
 			self.color = copy.color
 			self.size = copy.size
 
+		self.on_board = False;
+
 	def __str__(self):
 		return "(color: {c}, size: {s})".format(c=self.color, s=self.size)
 
@@ -29,3 +31,5 @@ class Gobblet(object):
 			return True
 		return False
 
+	def is_on_board(self):
+		return self.on_board

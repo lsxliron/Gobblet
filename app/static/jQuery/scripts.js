@@ -103,7 +103,8 @@ $(document).ready(function()
         method:'POST',
         data: {square_i: selectedSqare.attr('id').slice(-2, -1),
                square_j: selectedSqare.attr('id').slice(-1),
-               peg:selectedPeg.attr('id')},
+               peg:selectedPeg.attr('id'),
+               player: getCurrentTurnColor()},
       
       
         success: function(data)
@@ -121,8 +122,46 @@ $(document).ready(function()
 
           if (data.winner.toString() == "true")
           {
-            // $("#status").text(getCurrentTurnColor().toString() + " won the game.")
-            $("#status").text(flipColor().toString() + " won the game.")
+            $("#status").text(getCurrentTurnColor().toString() + " won the game.")
+            // $("#status").text(flipColor().toString() + " won the game.")
+            gameWon = true
+          }
+      }});//AJAX END
+
+      //COMPUTER TURN
+
+      $.ajax(
+      {
+        url:'/_place_new_peg_on_board/',
+        method:'POST',
+        data: {square_i: selectedSqare.attr('id').slice(-2, -1),
+               square_j: selectedSqare.attr('id').slice(-1),
+               peg:selectedPeg.attr('id'),
+               player: flipColor()},
+      
+      
+        success: function(data)
+        {
+          console.log(turn);
+          if (data.result.toString() == "true")
+          {
+            // animatePeg(selectedSqare, selectedPeg);
+            alert(data)
+            animatePeg($("#cv22"), $("#bbp3"));
+          }
+
+
+          else
+          {
+            $("#status").attr('class','alert alert-danger')
+            $("#status").text("Illegal Move!")
+          }
+            
+
+          if (data.winner.toString() == "true")
+          {
+            $("#status").text(getCurrentTurnColor().toString() + " won the game.")
+            // $("#status").text(flipColor().toString() + " won the game.")
             gameWon = true
           }
       }});//AJAX END
@@ -156,14 +195,14 @@ $(document).ready(function()
             liftPeg(selectedPeg, selectedSqare);
             turn = !(turn)
             gameWon = true;
-            $("#status").text(flipColor().toString() + " won the game.")
+            $("#status").text(getCurrentTurnColor().toString() + " won the game.")
           }
           else
-            alert('Illegal move');
+            $("#status").text("Illegal Move!")
 
           if (data.winner.toString() == "true")
           {
-            $("#status").text(flipColor().toString() + " won the game.")
+            $("#status").text(getCurrentTurnColor().toString() + " won the game.")
             gameWon = true
           }
 

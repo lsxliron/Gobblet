@@ -60,7 +60,7 @@ class Board(object):
 
 		return False
 
-	def place_gobblet_on_sqaure(self, i, j, gb):
+	def place_gobblet_on_sqaure(self, i, j, gb, new_gobblet=True):
 		"""
 		Place a peg on the board if the move is legal
 		"""
@@ -68,12 +68,14 @@ class Board(object):
 		#Legal move- placing a new peg on an occupied square
 		#when opponent has 3 pegs in a row
 		if self.three_in_a_row(i,j,gb):
+			gb.on_board = True
 			return True
 
 		#Illega move- trying to place a new gobblet on an 
 		#occupied square
 		if not self.grid[i][j].empty():
-			return False
+			if new_gobblet:
+				return False
 
 
 		#Make sure the square is not full
@@ -88,6 +90,7 @@ class Board(object):
 
 		#First peg in the square- occupy if it's free'
 		elif self.grid[i][j].empty():
+			gb.on_board = True
 			self.grid[i][j].stack[0] = gb
 			return True
 
@@ -99,6 +102,7 @@ class Board(object):
 					#Check that the spot is valid
 					#i.e not small peg on top of big peg
 					if gb.size > self.grid[i][j].stack[k-1].size:
+						gb.on_board = True
 						self.grid[i][j].stack[k] = gb
 						return True
 
@@ -144,7 +148,7 @@ class Board(object):
 		if peg_to_move_index != -1:
 			new_gobblet = Gobblet(-1,-1,self.grid[old_i][old_j].stack[peg_to_move_index])
 		
-			if self.place_gobblet_on_sqaure(new_i, new_j, new_gobblet):
+			if self.place_gobblet_on_sqaure(new_i, new_j, new_gobblet,False):
 				#Remove the gobblet from the old location
 				self.grid[old_i][old_j].stack[peg_to_move_index]=Gobblet()
 
@@ -253,6 +257,7 @@ class Board(object):
 			colors_list.append(self.grid[i][i].stack[self.find_top_peg_on_square(i,i)].color)
 		
 		if colors_list[0] != -1 and colors_list.count(colors_list[0]) == 4:
+			print "----------------------------DIAG----------------------------"
 			return True
 
 		#second diagonal
@@ -263,6 +268,7 @@ class Board(object):
 			k -= 1
 
 		if colors_list[0] != -1 and colors_list.count(colors_list[0]) == 4:
+			print "----------------------------DIAG----------------------------"
 			return True
 
 		return False
@@ -312,7 +318,7 @@ class Board(object):
 			count_dict = Counter(col) #perform the count
 
 			#if the column is possible to be winning increase hv
-			if not count_dict.has_key('Black') and count_dict.has_key('White'):
+			if not count_dict.has_key('Whie') and count_dict.has_key('Black'):
 				hv += 1
 			
 			col = list()	#reset list
@@ -335,7 +341,7 @@ class Board(object):
 			count_dict = Counter(row)	#perform the count
 
 			#if the row is possible to be winning increase hv
-			if not count_dict.has_key('Black') and count_dict.has_key('White'):
+			if not count_dict.has_key('White') and count_dict.has_key('Black'):
 				hv += 1
 
 			row = list()	#reset list
