@@ -25,6 +25,10 @@ class PegStack(object):
 			s = s + str(self.stack[i]) + "\n"
 		return s
 
+	def __iter__(self):
+		for peg in self.stack:
+			yield peg
+
 	def pop(self):
 		"""
 		Pops the top gobblet from the stack
@@ -35,7 +39,8 @@ class PegStack(object):
 		"""
 		Return the top gobblet in the stack
 		"""
-		return self.stack[len(self.stack - 1)]
+		return self.stack[len(self.stack)-1]
+
 
 	def get_top_size(self):
 		"""

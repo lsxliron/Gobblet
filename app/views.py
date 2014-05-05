@@ -182,7 +182,6 @@ def ai():
 		
 		#Remove peg from peg_stack
 		peg_number = int(data['peg_name'][-1:])
-		pdb.set_trace()
 		black_pegs_stacks[peg_number-1].pop()
 		
 

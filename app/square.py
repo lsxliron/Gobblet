@@ -1,8 +1,9 @@
+"""
+This class represents a Square on the board
+"""
 from gobblet import *
 class Square(object):
-	"""
-	This class represents a Square on the board
-	"""
+	
 
 	def __init__(self):
 		self.stack = list()

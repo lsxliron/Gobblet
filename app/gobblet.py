@@ -22,6 +22,9 @@ class Gobblet(object):
 		else:
 			return "(color: {c}, size: {s})".format(c=self.color, s=self.size)
 
+	def __eq__(self, other):
+		return self.color == other.color and self.size == other.size
+
 	def dummy(self):
 		"""
 		Returns true when a gobblet is dummy (size -1 and color -1)
