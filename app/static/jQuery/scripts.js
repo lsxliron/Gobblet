@@ -8,6 +8,7 @@ var turn = true;
 var gameWon = false //Disable board after winning
 var selectedPeg = null;
 var selectedSqare = null;
+var HUMAN_VS_PC = true
 
 $(document).ready(function()
 {
@@ -128,43 +129,42 @@ $(document).ready(function()
           }
       }});//AJAX END
 
-      //COMPUTER TURN
-
-      $.ajax(
+      if (HUMAN_VS_PC == true)
       {
-        url:'/_place_new_peg_on_board/',
-        method:'POST',
-        data: {square_i: selectedSqare.attr('id').slice(-2, -1),
-               square_j: selectedSqare.attr('id').slice(-1),
-               peg:selectedPeg.attr('id'),
-               player: flipColor()},
-      
-      
-        success: function(data)
+
+        $.ajax(
         {
-          console.log(turn);
-          if (data.result.toString() == "true")
+          url:'/_ai_api/',
+          method:'POST',
+          data: {},
+        
+        
+          success: function(data)
           {
-            // animatePeg(selectedSqare, selectedPeg);
-            alert(data)
-            animatePeg($("#cv22"), $("#bbp3"));
-          }
+            console.log(turn);
+            if (data.result.toString() == "true")
+            {
+              selectedSqare = $("#cv"+data.square.toString())
+              selectedPeg = $("#"+data.peg_name.toString())
+              animatePeg(selectedSqare, selectedPeg);
+            }
 
 
-          else
-          {
-            $("#status").attr('class','alert alert-danger')
-            $("#status").text("Illegal Move!")
-          }
-            
+            else
+            {
+              $("#status").attr('class','alert alert-danger')
+              $("#status").text("Illegal Move!")
+            }
+              
 
-          if (data.winner.toString() == "true")
-          {
-            $("#status").text(getCurrentTurnColor().toString() + " won the game.")
-            // $("#status").text(flipColor().toString() + " won the game.")
-            gameWon = true
-          }
-      }});//AJAX END
+            if (data.winner.toString() == "true")
+            {
+              $("#status").text(getCurrentTurnColor().toString() + " won the game.")
+              gameWon = true
+            }
+        }});//AJAX END
+      }
+
 
 
      }
@@ -255,7 +255,6 @@ function animatePeg(square, peg)
   peg.css('position', 'absolute');
   peg.css('left', peg.position().left);
   peg.css('top', peg.position().top);
-  
   
 
   peg.animate({'left':x + x_offset, 'top':y-y_offset}, {'duration':1000});

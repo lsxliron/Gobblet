@@ -1,7 +1,7 @@
 from square import *
 from gobblet import *
 from collections import Counter
-
+import pdb
 
 
 class Board(object):
@@ -290,7 +290,7 @@ class Board(object):
 		self.__init__();
 
 
-	def calculate_heuristic(self):
+	def calculate_heuristic_helper(self, player, opp):
 		"""
 		Calculate the heuristic value (hv)
 		The hv is the number of possible winning rows or columns for the player
@@ -298,6 +298,8 @@ class Board(object):
 		hv = 0;
 		col = list()
 		row=list()
+
+
 
 		#Checking possible winning cols
 		for i in range(0,4):
@@ -318,7 +320,7 @@ class Board(object):
 			count_dict = Counter(col) #perform the count
 
 			#if the column is possible to be winning increase hv
-			if not count_dict.has_key('Whie') and count_dict.has_key('Black'):
+			if not count_dict.has_key(opp) and count_dict.has_key(player):
 				hv += 1
 			
 			col = list()	#reset list
@@ -341,7 +343,7 @@ class Board(object):
 			count_dict = Counter(row)	#perform the count
 
 			#if the row is possible to be winning increase hv
-			if not count_dict.has_key('White') and count_dict.has_key('Black'):
+			if not count_dict.has_key(opp) and count_dict.has_key(player):
 				hv += 1
 
 			row = list()	#reset list
@@ -350,3 +352,79 @@ class Board(object):
 
 		return hv
 
+	def calculate_heuristic(self, player):
+		"""
+		Return the heuristic value of the curren state
+		"""
+		if player == 'Black':
+			opp = 'White'
+		else:
+			opp = 'Black'
+
+		player_hv = self.calculate_heuristic_helper(player, opp)
+		opp_hv = self.calculate_heuristic_helper(opp, player)
+
+		return player_hv - opp_hv
+
+
+	def three_in_a_row_vertical(self, player):
+		"""
+		Returns the column index if a player has 3 gobblets in a row and his next move is a winner
+		"""
+
+		for i in range(0,4):
+			full_col = list()	#Holds the top pegs colors for the current row
+			first_top_gobblet_index = self.find_top_peg_on_square(0,i)
+			second_top_gobblet_index = self.find_top_peg_on_square(1,i)
+			third_top_gobblet_index = self.find_top_peg_on_square(2,i)
+			fourth_top_gobblet_index = self.find_top_peg_on_square(3,i)
+
+			full_col.append(self.grid[0][i].stack[first_top_gobblet_index].color)
+			full_col.append(self.grid[1][i].stack[second_top_gobblet_index].color)
+			full_col.append(self.grid[2][i].stack[third_top_gobblet_index].color)
+			full_col.append(self.grid[3][i].stack[fourth_top_gobblet_index].color)
+			
+			#Check that all the colors a the same
+			if full_col.count(player) == 3:
+				#find the exact location to blockmove
+				for j in range(0,4):
+					if full_col[i]!=player:
+						return (full_col.index(full_col[i]), i)
+
+			full_col = list()#Reset the list
+		return False
+
+
+	def three_in_a_row_horizontal(self, player):
+		"""
+		Returns the column index if a player has 3 gobblets in a row and his next move is a winner
+		"""
+
+		for i in range(0,4):
+			full_col = list()	#Holds the top pegs colors for the current row
+			first_top_gobblet_index = self.find_top_peg_on_square(i,0)
+			second_top_gobblet_index = self.find_top_peg_on_square(i,1)
+			third_top_gobblet_index = self.find_top_peg_on_square(i,2)
+			fourth_top_gobblet_index = self.find_top_peg_on_square(i,3)
+
+			full_col.append(self.grid[i][0].stack[first_top_gobblet_index].color)
+			full_col.append(self.grid[i][1].stack[second_top_gobblet_index].color)
+			full_col.append(self.grid[i][2].stack[third_top_gobblet_index].color)
+			full_col.append(self.grid[i][3].stack[fourth_top_gobblet_index].color)
+			
+			#Check that all the colors a the same
+			if full_col.count(player) == 3:
+				#find the exact location to blockmove
+				for j in range(0,4):
+					if full_col[i]!=player:
+						return (i,full_col.index(full_col[i]))
+
+			full_col = list()#Reset the list
+		return False
+
+	def three_in_a_row_ai(self,player):
+		row = self.three_in_a_row_horizontal(player)
+		col = self.three_in_a_row_vertical(player)
+		if row:
+			return row
+		return col
