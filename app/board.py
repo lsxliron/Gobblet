@@ -397,7 +397,7 @@ class Board(object):
 				#find the exact location to blockmove
 				for j in range(0,4):
 					if full_col[j]!=player:
-						return (j,full_col.index(full_col[i]))
+						return (i,full_col.index(full_col[j]))
 
 			full_col = list()#Reset the list
 		return False
