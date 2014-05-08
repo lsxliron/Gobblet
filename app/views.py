@@ -102,13 +102,18 @@ pd['bbp3']=bbp3
 
 
 
-ob_pd= dict()
-global not_ob_pd 
-not_ob_pd= dict()
+ob_pd_black = dict()
+ob_pd_white = dict()
+not_ob_pd_black = dict()
+not_ob_pd_white = dict()
 
+
+#Create dictionary for pegs on board
 for key in pd.keys():
 	if pd[key].color == 'Black':
-		not_ob_pd[key] = pd[key]
+		not_ob_pd_black[key] = pd[key]
+	elif pd[key].color == 'White':
+		not_ob_pd_white[key] = pd[key]
 
 
 
@@ -140,7 +145,13 @@ def makeMove():
 	#Make a move
 	result = mainBoard.place_gobblet_on_sqaure(i_position, j_position, pd[peg_name]);
 
-	print mainBoard
+	#Insert peg to on board dictionary
+	if result:
+		ob_pd_white[peg_name] = pd[peg_name]
+		not_ob_pd_white.pop(peg_name)
+
+
+	# print mainBoard
 
 	#Check for a winner
 	winner = mainBoard.check_winner()
@@ -159,8 +170,10 @@ def change_peg_position():
 
 	
 	#Make a move
-	result = mainBoard.move_peg_on_board(old_i_position,old_j_position, new_i_position, new_j_position)
-	print mainBoard
+	result = mainBoard.move_peg_on_board(old_i_position,old_j_position, 
+										 new_i_position, 
+										 new_j_position)
+	# print mainBoard
 	winner = mainBoard.check_winner()
 	return jsonify(result=result, winner=winner)
 
@@ -169,24 +182,29 @@ def change_peg_position():
 def clear_board():
 	mainBoard.reset()
 	
-	print mainBoard
+	# print mainBoard
 	return "true"
 
 @app.route('/_ai_api/', methods=['POST'])
 def ai():
-	data = play(mainBoard, pd, ob_pd, not_ob_pd, black_pegs_stacks, white_pegs_stacks)
+	data = play(mainBoard, pd, ob_pd_black, not_ob_pd_black, 
+		        ob_pd_white, not_ob_pd_white,
+		        black_pegs_stacks, white_pegs_stacks)
 	
 	if data['new_peg']:
 		#If move is valid, add peg to on_board dictionary (ob_pd)
-		ob_pd[data['peg_name']]=pd[data['peg_name']]
+		if not_ob_pd_black.has_key(data['peg_name']):
+			ob_pd_black[data['peg_name']]=pd[data['peg_name']]
 		
-		#Remove peg from peg_stack
-		peg_number = int(data['peg_name'][-1:])
-		black_pegs_stacks[peg_number-1].pop()
+			#Remove on board peg from not_on_board dictionay (not_ob_pd)
+			not_ob_pd_black.pop(data['peg_name'])
+
+			#Remove peg from peg_stack
+			peg_number = int(data['peg_name'][-1:])
+			black_pegs_stacks[peg_number-1].pop()
 		
 
-		#Remove on board peg from not_on_board dictionay (not_ob_pd)
-		not_ob_pd.pop(data['peg_name'])
+		
 
 	return jsonify(result = data['result'],
 		           peg_name = data['peg_name'],

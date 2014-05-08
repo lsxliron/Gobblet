@@ -67,15 +67,16 @@ class Board(object):
 		
 		#Legal move- placing a new peg on an occupied square
 		#when opponent has 3 pegs in a row
-		if self.three_in_a_row(i,j,gb):
-			gb.on_board = True
-			return True
+		# if self.three_in_a_row(i,j,gb):
+			# gb.on_board = True
+			# return True
 
-		#Illega move- trying to place a new gobblet on an 
+		#Illegal move- trying to place a new gobblet on an 
 		#occupied square
 		if not self.grid[i][j].empty():
 			if new_gobblet:
-				return False
+				if not self.three_in_a_row(i,j,gb):
+					return False
 
 
 		#Make sure the square is not full
@@ -112,28 +113,6 @@ class Board(object):
 		return False
 
 
-	
-
-
-
-		
-
-
-	# def move_peg_on_board(self, old_i, old_j, new_i, new_j):
-	# 	"""
-	# 	Moves peg from (old_i, old_j) to (new_i, new_j) if the move is legal
-	# 	"""
-	# 	peg_to_move_index = self.find_top_peg_on_square(old_i,old_j)
-	# 	#Copy of the gobblet to move
-	# 	if peg_to_move_index != -1:
-	# 		new_gobblet = Gobblet(-1,-1,self.grid[old_i][old_j].stack[peg_to_move_index])
-		
-	# 		if self.place_gobblet_on_sqaure(new_i, new_j, new_gobblet):
-	# 			#Remove the gobblet from the old location
-	# 			self.grid[old_i][old_j].stack[peg_to_move_index]=Gobblet()
-	# 			return True
-	# 	return False
-
 	def move_peg_on_board(self, old_i, old_j, new_i, new_j):
 		"""
 		Moves peg from (old_i, old_j) to (new_i, new_j) if the move is legal
@@ -141,12 +120,13 @@ class Board(object):
 			0 for illegal
 			1 for legal move
 			2 when player reveal opponent peg and opponent wins
-
 		"""
+
 		peg_to_move_index = self.find_top_peg_on_square(old_i,old_j)
 		#Copy of the gobblet to move
 		if peg_to_move_index != -1:
-			new_gobblet = Gobblet(-1,-1,self.grid[old_i][old_j].stack[peg_to_move_index])
+			# new_gobblet = Gobblet(-1,-1,self.grid[old_i][old_j].stack[peg_to_move_index])
+			new_gobblet = self.grid[old_i][old_j].stack[peg_to_move_index]
 		
 			if self.place_gobblet_on_sqaure(new_i, new_j, new_gobblet,False):
 				#Remove the gobblet from the old location
@@ -399,7 +379,7 @@ class Board(object):
 		"""
 		Returns the column index if a player has 3 gobblets in a row and his next move is a winner
 		"""
-
+		# pdb.set_trace()
 		for i in range(0,4):
 			full_col = list()	#Holds the top pegs colors for the current row
 			first_top_gobblet_index = self.find_top_peg_on_square(i,0)
@@ -416,15 +396,72 @@ class Board(object):
 			if full_col.count(player) == 3:
 				#find the exact location to blockmove
 				for j in range(0,4):
-					if full_col[i]!=player:
-						return (i,full_col.index(full_col[i]))
+					if full_col[j]!=player:
+						return (j,full_col.index(full_col[i]))
 
 			full_col = list()#Reset the list
 		return False
 
-	def three_in_a_row_ai(self,player):
-		row = self.three_in_a_row_horizontal(player)
-		col = self.three_in_a_row_vertical(player)
+	def three_in_a_row_ai(self,player="Black"):
+		"""
+		Returns a dictionary which contains to winning row and column if exists
+		"""
+		opponent = "White"
+		if player == "White":
+			opponent = "Black"
+		# pdb.set_trace()
+		win_dict = dict()
+		row = self.three_in_a_row_horizontal(opponent)
+		col = self.three_in_a_row_vertical(opponent)
+		
 		if row:
-			return row
-		return col
+			win_dict["row"] = row
+		
+		if col:
+			win_dict["col"] = col	
+		
+		if len(win_dict) != 0:
+			return win_dict
+
+		return False
+
+
+	def look_for_winning_move(self, player="Black"):
+		"""
+		Returns the square coordinates of the winning move (if exists)
+		for the current turn
+		"""
+		win_dict = self.three_in_a_row_ai()
+		if win_dict:
+
+			opponent = "Black"
+			if player == "White":
+				opponent = "Black"
+
+			
+			#Get row winning position (if exists)
+			if win_dict.has_key("row"):
+				row = win_dict["row"]
+				for i in range(0,4):
+					if self.grid[row][i].stack[self.find_top_peg_on_square(row,i)].color == opponent:
+						return (row,i)
+
+			#Get col winning position (if exists)
+			if win_dict.has_key("col"):
+				col=win_dict["col"]
+				for i in range(0,4):
+					if self.grid[i][col].stack[self.find_top_peg_on_square(i,col)].color == opponent:
+						return (i, col)
+
+		return False
+
+
+
+
+
+
+
+
+
+
+

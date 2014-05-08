@@ -12,23 +12,30 @@ from random import randint
 import time
 
 
-def play(board, all_pegs, on_board_pegs, off_board_pegs, black_stacks, white_stacks):
+def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black, 
+	     on_board_pegs_white, off_board_pegs_white, 
+	     black_stacks, white_stacks):
 	player = "White"
 	comp = "Black"
 	block_winner = board.three_in_a_row_ai(player)
-	peg_name="XXX"
 	res = False
+	winning_move = board.three_in_a_row_ai()
+	print "___________________________________________________"
+	print "___________________________________________________"
+	print winning_move
+	print "___________________________________________________"
+	print "___________________________________________________"
+	
 
 	#First move- put one large peg on a random square
-	if len(on_board_pegs) == 0:
+	if len(on_board_pegs_black) == 0:
 		i = randint(0,3)
 		j = randint(0,3)
 		peg_number = randint(1, 3)
 		
 		peg_object = black_stacks[peg_number-1].top()
-		print peg_object
-		for key,value in all_pegs.iteritems():
 
+		for key,value in all_pegs.iteritems():
 			if value == peg_object:
 				peg_name = key
 
@@ -48,92 +55,202 @@ def play(board, all_pegs, on_board_pegs, off_board_pegs, black_stacks, white_sta
 		#time.sleep(2)
 		return data
 
-		
+	
 	else:
-		"""nodes_list_new_pegs= list()
+		nodes_list_new_pegs= list()
 		nodes_list_replace_pegs=list()
-		if not block_winner:
-			#Do possible moves with new pegs
-			for i in range(0,15):
-				#Get a copy of the current board
-				board_copy = copy.deepcopy(board)
-				
-				#Get the stack number of the biggest peg possible
-				biggest_peg = get_biggest_peg_possible(black_stacks)
-				
-				#Make a move on the board copy
-				board_copy.place_gobblet_on_sqaure(i/4,i%4, black_stacks[biggest_peg].top())
-				
-				#Calculate hv
-				hv_tuple = (board_copy.calculate_heuristic("Black"), board_copy.calculate_heuristic("White"))
-				#Insert games state to node
-				nodes_list_new_pegs.append(Node(board_copy, hv_tuple, black_stacks[biggest_peg].top(), (i/4,i%4)))	
+	
+		nodes_list_new_pegs_black = get_hv_list_for_new_pegs(black_stacks, board)
+		nodes_list_replace_pegs_black = get_hv_list_for_replace_pegs(on_board_pegs_black, board, all_pegs)
+		max_replace = find_max_hv(nodes_list_replace_pegs_black,"Black")
+		max_new = find_max_hv(nodes_list_new_pegs_black,"Black")
+		if max_replace != 100:
+			max_replace_value = nodes_list_replace_pegs_black[max_replace].hv[1]
+		else: 
+			max_replace_value = -1
+		max_new_value = nodes_list_new_pegs_black[max_new].hv[1]
+
+
+		#-------------------#
+		#Find the best move #
+		#-------------------#
+
+		
+		#Make a winning move if possible:
+
+		if winning_move:
+			if winning_move.has_key("row"):
+				winning_square = winning_move["row"]
+			elif winning_move.has_key("col"):
+				winning_square = winning_move["col"]
+			#Find the biggest peg possible to add to the board
+			gb = black_stacks[get_biggest_peg_possible(black_stacks)].top()
+			
+			print gb
+			
+			for key, value in off_board_pegs_black.iteritems():
+				if gb is value:
+					peg_name = key
+
+			res = board.place_gobblet_on_sqaure(winning_square[0], winning_square[1], gb)
+
+			if res:
+				data = dict()
+				data['result'] = res
+				data['peg_name'] = peg_name;
+				data['square'] = str(winning_square[0])+str(winning_square[1])
+				data['winner'] = board.check_winner()
+				data['new_peg'] = False
+				return data
+
+
+
+		# if max_replace_value>max_new_value:
+		if max_replace_value < max_new_value and not res:  
+			node = nodes_list_new_pegs_black[max_new]
+			
+			#Get peg name
+			for key, value in off_board_pegs_black.iteritems():
+				if value == node.peg_moved:
+					peg_name=key
+			
+			gb = node.peg_moved
+
+			square = node.destination_square
+
+			# pdb.set_trace()
+
+			res = board.place_gobblet_on_sqaure(square[0],square[1],gb)
+			winner = board.check_winner()
+			
+			print "BLACK IN MOVING {pn} TO ({i}, {j})".format(pn=peg_name, i=square[0], j=square[1])
+			data = dict()
+			data['result'] = res;
+			data['peg_name'] = peg_name;
+			data['square'] = str(square[0])+str(square[1])
+			data['winner'] = winner
+			data['new_peg'] = True
+			#time.sleep(2)
+			return data
+
+
+		#Replace peg on board
+		elif max_replace_value >= max_new_value:
+			
+			# pdb.set_trace()
+			node = nodes_list_replace_pegs_black[max_replace]
+			
+			
+			gb = board.find_top_peg_on_square(node.current_location[0],node.current_location[1])
+			# pdb.set_trace()
+			#Get peg name
+			for key, value in on_board_pegs_black.iteritems():# off_board_pegs_black.iteritems():
+				if value is board.grid[node.current_location[0]][node.current_location[1]].stack[gb]:
+					peg_name=key
+
+
+			square = node.destination_square
+			current_location = node.current_location
 
 			
-			#Do possible moves by replacing gobblets
-			board_copy = copy.deepcopy(board)
-			#for i in range(0,15):
-			for gobblet_to_move in on_board_pegs.values():
-				#gobblet_to_move = board_copy.grid[i/4][i%4].stack[board_copy.find_top_peg_on_square(i/4, i%4)]
-				
-				#if gobblet_to_move != None:
-				for k in range(0,4):
-					for j in range(0,4):
-						#Get a copy of the current board
-						board_copy = copy.deepcopy(board)
-						#Get the peg to move
-						board_copy.move_peg_on_board(i/4,i%4, k,j)
-						hv_tuple = (board_copy.calculate_heuristic("Black"), board_copy.calculate_heuristic("White"))
-						#Insert state to the nodes list
-						nodes_list_replace_pegs.append(Node(board_copy, hv_tuple, gobblet_to_move, (k,j)))"""
-		nodes_list_new_pegs=get_hv_list_for_new_pegs(black_stacks, board)
-		nodes_list_replace_pegs=get_hv_list_for_replace_pegs(on_board_pegs, board)
-		xxx=find_max_hv(nodes_list_new_pegs, "Black")
-		yyy=find_max_hv(nodes_list_replace_pegs, "Black")
+
+			res = board.move_peg_on_board(current_location[0],current_location[1],square[0],square[1])
+			winner = board.check_winner()
+			print "________________________________________________________________________"
+			print res
+			print "________________________________________________________________________"
+			
+			print "BLACK IN RE-MOVING {pn} FROM ({i1},{j1}) TO ({i2}, {j2})".format(pn=peg_name,i1=current_location[0],j1=current_location[1], i2=square[0], j2=square[1])
+			data = dict()
+			if res == 1:
+				res_return = True
+			else:
+				res_return = False
+
+			data['result'] = res_return;
+			data['peg_name'] = peg_name;
+			data['square'] = str(square[0])+str(square[1])
+			data['winner'] = winner
+			data['new_peg'] = False
+			#time.sleep(2)
+			
+			return data
 
 
-	pdb.set_trace()
+		else:
+			print "PROBLEM!!!"
+			pdb.set_trace()
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 def get_hv_list_for_new_pegs(player_stacks, board):
+
 	nodes_list_new_pegs=list()
 
-	for i in range(0,15):
-		#Get a copy of the current board
-		board_copy = copy.deepcopy(board)
-		
-		#Get the stack number of the biggest peg possible
+	for j in range(0,3):
 		biggest_peg = get_biggest_peg_possible(player_stacks)
-		
-		#Make a move on the board copy
-		board_copy.place_gobblet_on_sqaure(i/4,i%4, player_stacks[biggest_peg].top())
-		
-		#Calculate hv
-		hv_tuple = (board_copy.calculate_heuristic("Black"), board_copy.calculate_heuristic("White"))
-		#Insert games state to node
-		nodes_list_new_pegs.append(Node(board_copy, hv_tuple, player_stacks[biggest_peg].top(), (i/4,i%4)))	
+		for i in range(0,15):
+			
+			#Get a copy of the current board
+			board_copy = copy.deepcopy(board)
+						
+			#Make a move on the board copy
+			move = board_copy.place_gobblet_on_sqaure(i/4,i%4, player_stacks[biggest_peg].top())
+			
+			#Calculate hv
+			hv_tuple = (board_copy.calculate_heuristic("White"), board_copy.calculate_heuristic("Black"))
+			
+			#Create a node for game state
+			if move:
+				nodes_list_new_pegs.append(Node(board_copy, hv_tuple, player_stacks[biggest_peg].top(), (i/4,i%4), player_stacks))	
 
 	return nodes_list_new_pegs
 
 
-def get_hv_list_for_replace_pegs(on_board_pegs, board):
+
+def get_hv_list_for_replace_pegs(on_board_pegs, board, all_pegs):
 	nodes_list_replace_pegs = list()
-	board_copy = copy.deepcopy(board)
-	for i in range(0,15):
-		gobblet_to_move = board_copy.grid[i/4][i%4].stack[board_copy.find_top_peg_on_square(i/4, i%4)]
-		if gobblet_to_move != -1:
-			for k in range(0,4):
-				for j in range(0,4):
-					#Get a copy of the current board
-					board_copy = copy.deepcopy(board)
-					#Get the peg to move
-					board_copy.move_peg_on_board(i/4,i%4, k,j)
-					hv_tuple = (board_copy.calculate_heuristic("Black"), board_copy.calculate_heuristic("White"))
-					#Insert state to the nodes list
-					nodes_list_replace_pegs.append(Node(board_copy, hv_tuple, gobblet_to_move, (k,j)))
+	
+	# pdb.set_trace()
+	for peg in on_board_pegs.values():
+		#get the current peg location
+		# pdb.set_trace()
+		board_copy = copy.deepcopy(board)
+		
+		for i in range(0,4):
+			for j in range(0,4):
+				peg_to_move_temp = board.grid[i][j].stack[board.find_top_peg_on_square(i,j)]
+				if peg is peg_to_move_temp:
+					current_location = (i, j)
+					peg_to_move = peg_to_move_temp
+		
+		for i in range(0,4):
+			for j in range(0,4):
+				board_copy = copy.deepcopy(board)
+				hv_tuple = (board_copy.calculate_heuristic("White"), 
+					        board_copy.calculate_heuristic("Black"))
+
+				move = board_copy.move_peg_on_board(current_location[0], current_location[1],i,j)
+				
+				if move == 1:
+					nodes_list_replace_pegs.append(Node(board_copy, hv_tuple, peg_to_move, (i,j), None, on_board_pegs, (current_location[0],current_location[1])))
 
 	return nodes_list_replace_pegs
+
+
 
 def get_biggest_peg_possible(stacks_list):
 	"""
@@ -152,7 +269,10 @@ def find_max_hv(nodes_list, player):
 	"""
 	Return the index of the highes hv in the nodes list
 	"""
-	if player == "White":
+
+	if len(nodes_list) == 0:
+		return 100
+	elif player == "White":
 		index = 0
 	else:
 		index = 1
@@ -167,16 +287,21 @@ def find_max_hv(nodes_list, player):
 
 	return max_hv_index
 
+def find_min_hv(nodes_list, player):
+	"""
+	Return the index of the highes hv in the nodes list
+	"""
+	if player == "White":
+		index = 0
+	else:
+		index = 1
 
+	min_hv = nodes_list[0].hv[index]
+	min_hv_index = 0
 
+	for i in range(0, len(nodes_list)):
+		if min_hv > nodes_list[i].hv[index]:
+			min_hv = nodes_list[i].hv[index]
+			min_hv_index = i
 
-		
-		
-
-
-
-
-
-
-
-
+	return min_hv_index

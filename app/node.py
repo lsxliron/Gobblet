@@ -4,12 +4,15 @@ This class represents a state of the game
 
 
 class Node(object):
-	def __init__(self, board_state, hv, peg_moved, destination_square_tuple):
-		selfboard_state = board_state
+	def __init__(self, board_state, hv, peg_moved, destination_square_tuple, stacks, on_board_pegs=None, current_location=None):
+		self.board = board_state
 		#Heuristic value: number of options to win (white, black)
 		self.hv = hv
 		self.peg_moved = peg_moved
 		self.destination_square = destination_square_tuple
+		self.stacks = stacks
+		self.on_board_pegs = on_board_pegs
+		self.current_location = current_location
 
 
 	def __str__(self):

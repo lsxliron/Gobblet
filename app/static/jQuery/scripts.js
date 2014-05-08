@@ -136,12 +136,12 @@ $(document).ready(function()
         {
           url:'/_ai_api/',
           method:'POST',
-          data: {},
+          // data: {},
         
         
           success: function(data)
           {
-            console.log(turn);
+            console.log(data.result.toString());
             if (data.result.toString() == "true")
             {
               selectedSqare = $("#cv"+data.square.toString())
@@ -207,6 +207,45 @@ $(document).ready(function()
           }
 
       }});//AJAX END
+
+      if (HUMAN_VS_PC == true)
+      {
+
+        $.ajax(
+        {
+          url:'/_ai_api/',
+          method:'POST',
+          data: {},
+        
+        
+          success: function(data)
+          {
+            console.log(data.result.toString());
+            console.log("!!!!!!")
+            if (data.result.toString() == "true")
+            {
+              selectedSqare = $("#cv"+data.square.toString())
+              selectedPeg = $("#"+data.peg_name.toString())
+              animatePeg(selectedSqare, selectedPeg);
+            }
+
+
+            else
+            {
+              $("#status").attr('class','alert alert-danger')
+              $("#status").text("Illegal Move!")
+            }
+              
+
+            if (data.winner.toString() == "true")
+            {
+              $("#status").text(getCurrentTurnColor().toString() + " won the game.")
+              gameWon = true
+            }
+        }});//AJAX END
+      }
+
+
     }
   });
 
