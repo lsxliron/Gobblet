@@ -94,6 +94,8 @@ $(document).ready(function()
       
     }
 
+   
+
     //Place new peg on the board
     if (newPegOnBoard)
     {
@@ -129,41 +131,41 @@ $(document).ready(function()
           }
       }});//AJAX END
 
-      if (HUMAN_VS_PC == true)
-      {
+      // if (HUMAN_VS_PC == true)
+      // {
 
-        $.ajax(
-        {
-          url:'/_ai_api/',
-          method:'POST',
-          // data: {},
+      //   $.ajax(
+      //   {
+      //     url:'/_ai_api/',
+      //     method:'POST',
+      //     // data: {},
         
         
-          success: function(data)
-          {
-            console.log(data.result.toString());
-            if (data.result.toString() == "true")
-            {
-              selectedSqare = $("#cv"+data.square.toString())
-              selectedPeg = $("#"+data.peg_name.toString())
-              animatePeg(selectedSqare, selectedPeg);
-            }
+      //     success: function(data)
+      //     {
+      //       console.log(data.result.toString());
+      //       if (data.result.toString() == "true")
+      //       {
+      //         selectedSqare = $("#cv"+data.square.toString())
+      //         selectedPeg = $("#"+data.peg_name.toString())
+      //         animatePeg(selectedSqare, selectedPeg);
+      //       }
 
 
-            else
-            {
-              $("#status").attr('class','alert alert-danger')
-              $("#status").text("Illegal Move!")
-            }
+      //       else
+      //       {
+      //         $("#status").attr('class','alert alert-danger')
+      //         $("#status").text("Illegal Move!")
+      //       }
               
 
-            if (data.winner.toString() == "true")
-            {
-              $("#status").text(getCurrentTurnColor().toString() + " won the game.")
-              gameWon = true
-            }
-        }});//AJAX END
-      }
+      //       if (data.winner.toString() == "true")
+      //       {
+      //         $("#status").text(getCurrentTurnColor().toString() + " won the game.")
+      //         gameWon = true
+      //       }
+      //   }});//AJAX END
+      // }
 
 
 
@@ -207,6 +209,7 @@ $(document).ready(function()
           }
 
       }});//AJAX END
+    }
 
       if (HUMAN_VS_PC == true)
       {
@@ -220,12 +223,18 @@ $(document).ready(function()
         
           success: function(data)
           {
+            console.log("---------------------");
             console.log(data.result.toString());
-            console.log("!!!!!!")
-            if (data.result.toString() == "true")
+            console.log("---------------------");
+            
+            if ((data.result.toString() != 0) || (data.result.toString() != "False"))
             {
+              console.log("IN THE IF")
               selectedSqare = $("#cv"+data.square.toString())
               selectedPeg = $("#"+data.peg_name.toString())
+              console.log("---------------------");
+              console.log( "Moving "+selectedPeg.attr("id") + " To Square " + selectedSqare.attr("id"));
+              console.log("---------------------");
               animatePeg(selectedSqare, selectedPeg);
             }
 
@@ -239,14 +248,14 @@ $(document).ready(function()
 
             if (data.winner.toString() == "true")
             {
-              $("#status").text(getCurrentTurnColor().toString() + " won the game.")
+              $("#status").text(getCurrentTurnColor().toString() + " won the game.");
               gameWon = true
             }
-        }});//AJAX END
+          }});//AJAX END
       }
 
 
-    }
+    // }
   });
 
 

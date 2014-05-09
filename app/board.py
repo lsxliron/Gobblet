@@ -28,7 +28,7 @@ class Board(object):
 			output += "\n"
 		return output
 
-	def three_in_a_row(self,i,j, gb):
+	def three_in_a_row(self,i,j, gb, gob_color=None):
 		"""
 		returns true if the opponent can make a winner move
 		"""
@@ -38,6 +38,9 @@ class Board(object):
 			color = "Black"
 		else:
 			color = "White"
+
+		if gob_color:
+			color = gob_color
 
 		row_gobblet_list = list()
 		col_gobblet_list = list()
@@ -55,7 +58,7 @@ class Board(object):
 		row_gobblet_list.append(self.grid[3][j].stack[self.find_top_peg_on_square(3,j)].color)
 
 
-		if col_gobblet_list.count(color) == 3 or row_gobblet_list.count(color) == 3:
+		if col_gobblet_list.count(color) >= 3 or row_gobblet_list.count(color) >= 3:
 			return True
 
 		return False
@@ -161,70 +164,97 @@ class Board(object):
 		return top
 
 
+	# def winner_row(self):
+	# 	"""
+	# 	Returns true if there is a winning row or false otherwise
+	# 	We create a list of booleans for the board rows. If there exists
+	# 	a True row then there is a winner.
+	# 	"""
+	# 	full_row = list()
+
+	# 	#Check if there exists a winning row
+	# 	for i in range(0,4):
+	# 		winner = True
+	# 		for j in range(0,3):
+	# 			#Case that the square is not empty
+	# 			if not self.grid[i][j].empty():
+	# 				#get the top gobblet on the square
+	# 				current_top_gobblet_index = self.find_top_peg_on_square(i,j)
+	# 				next_top_gobblet_index = self.find_top_peg_on_square(i,j+1)
+
+	# 				#Check if gobblets have the same colors
+	# 				if self.grid[i][j].stack[current_top_gobblet_index].color != self.grid[i][j+1].stack[next_top_gobblet_index].color:
+	# 					winner = False
+	# 			#Case the square is empty- impossible to be a winning row
+	# 			else:
+	# 				winner = False
+
+	# 		full_row.append(winner)
+
+	# 	return True in full_row
 	def winner_row(self):
-		"""
-		Returns true if there is a winning row or false otherwise
-		We create a list of booleans for the board rows. If there exists
-		a True row then there is a winner.
-		"""
 		full_row = list()
 
-		#Check if there exists a winning row
+		#Check for a row winner
 		for i in range(0,4):
-			winner = True
-			for j in range(0,3):
-				#Case that the square is not empty
-				if not self.grid[i][j].empty():
-					#get the top gobblet on the square
-					current_top_gobblet_index = self.find_top_peg_on_square(i,j)
-					next_top_gobblet_index = self.find_top_peg_on_square(i,j+1)
+			for j in range(0,4):
+				full_row.append(self.grid[i][j].stack[(self.find_top_peg_on_square(i,j))].color)
 
-					#Check if gobblets have the same colors
-					if self.grid[i][j].stack[current_top_gobblet_index].color != self.grid[i][j+1].stack[next_top_gobblet_index].color:
-						winner = False
-				#Case the square is empty- impossible to be a winning row
-				else:
-					winner = False
-
-			full_row.append(winner)
-
-		return True in full_row
-
+			if full_row.count(full_row[0]) == 4 and full_row[0]!=-1:
+				return True
+			else:
+				full_row=list()
+		return False
 
 	def winner_col(self):
-		"""
-		Returns true if there is a winning column or false otherwise
-		We create a list of booleans for the board columns. If there exists
-		a True row then there is a winner.
-		"""
-		
-		#If we have empty square on a col this col can't be a winner
-		exists_empty_squares = False
-		
+		full_col = list()
+
 		for i in range(0,4):
-			full_col = list()	#Holds the top pegs colors for the current row
 			for j in range(0,4):
-				if self.grid[j][i].empty():
-					exists_empty_squares = True
+				full_col.append(self.grid[j][i].stack[(self.find_top_peg_on_square(j,i))].color)
 
-			if not exists_empty_squares:
-				first_top_gobblet_index = self.find_top_peg_on_square(0,i)
-				second_top_gobblet_index = self.find_top_peg_on_square(1,i)
-				third_top_gobblet_index = self.find_top_peg_on_square(2,i)
-				fourth_top_gobblet_index = self.find_top_peg_on_square(3,i)
-
-				full_col.append(self.grid[0][i].stack[first_top_gobblet_index].color)
-				full_col.append(self.grid[1][i].stack[second_top_gobblet_index].color)
-				full_col.append(self.grid[2][i].stack[third_top_gobblet_index].color)
-				full_col.append(self.grid[3][i].stack[fourth_top_gobblet_index].color)
-
-				#Check that all the colors a the same
-				if full_col.count(full_col[0]) == len(full_col):
-					return True
-
-			exists_empty_squares=False
-
+			if full_col.count(full_col[0]) == 4 and full_col[0]!=-1:
+				return True
+			else:
+				full_col=list()
 		return False
+
+
+
+	# def winner_col(self):
+	# 	"""
+	# 	Returns true if there is a winning column or false otherwise
+	# 	We create a list of booleans for the board columns. If there exists
+	# 	a True row then there is a winner.
+	# 	"""
+		
+	# 	#If we have empty square on a col this col can't be a winner
+	# 	exists_empty_squares = False
+		
+	# 	for i in range(0,4):
+	# 		full_col = list()	#Holds the top pegs colors for the current row
+	# 		for j in range(0,4):
+	# 			if self.grid[j][i].empty():
+	# 				exists_empty_squares = True
+
+	# 		if not exists_empty_squares:
+	# 			first_top_gobblet_index = self.find_top_peg_on_square(0,i)
+	# 			second_top_gobblet_index = self.find_top_peg_on_square(1,i)
+	# 			third_top_gobblet_index = self.find_top_peg_on_square(2,i)
+	# 			fourth_top_gobblet_index = self.find_top_peg_on_square(3,i)
+
+	# 			full_col.append(self.grid[0][i].stack[first_top_gobblet_index].color)
+	# 			full_col.append(self.grid[1][i].stack[second_top_gobblet_index].color)
+	# 			full_col.append(self.grid[2][i].stack[third_top_gobblet_index].color)
+	# 			full_col.append(self.grid[3][i].stack[fourth_top_gobblet_index].color)
+
+	# 			#Check that all the colors a the same
+	# 			if full_col.count(full_col[0]) == len(full_col):
+	# 				return True
+
+	# 		exists_empty_squares=False
+
+	# 	return False
 
 	def winner_diag(self):
 		"""
@@ -243,8 +273,8 @@ class Board(object):
 		#second diagonal
 		colors_list=list()
 		k = 3
-		for i in range(0,4):
-			colors_list.append(self.grid[k][i].stack[self.find_top_peg_on_square(k,i)].color)
+		for j in range(0,4):
+			colors_list.append(self.grid[k][j].stack[self.find_top_peg_on_square(k,j)].color)
 			k -= 1
 
 		if colors_list[0] != -1 and colors_list.count(colors_list[0]) == 4:
@@ -261,6 +291,7 @@ class Board(object):
 		column_winner = self.winner_col()
 		row_winner = self.winner_row()
 		diag_winner = self.winner_diag()
+		print "\nROW:\t{r}\nCOL:\t{c}\nDIAG:\t{d}\n\n".format(r=row_winner, c=column_winner, d=diag_winner)
 		return column_winner or row_winner or diag_winner
 
 	def reset(self):
@@ -330,7 +361,8 @@ class Board(object):
 			
 
 
-		return hv
+		return hv + self.get_longest_chain()
+		# return self.get_longest_chain()
 
 	def calculate_heuristic(self, player):
 		"""
@@ -345,6 +377,7 @@ class Board(object):
 		opp_hv = self.calculate_heuristic_helper(opp, player)
 
 		return player_hv - opp_hv
+		# return player_hv
 
 
 	def three_in_a_row_vertical(self, player):
@@ -491,6 +524,50 @@ class Board(object):
 
 		return False
 
+	def longest_chain_row(self, player="Black"):
+		"""
+		Returns the highest number for consecutive pegs in the same row
+		"""
+		max_chain = 0
+		for i in range(0,4):
+			temp = 1
+			for j in range(0,3):
+				color1 = self.grid[i][j].stack[self.find_top_peg_on_square(i,j)].color 
+				color2 = self.grid[i][j+1].stack[self.find_top_peg_on_square(i,j+1)].color
+				if color1 == color2 and color1 != -1:
+					temp += 1
+				else:
+					if temp > max_chain:
+						max_chain = temp
+					temp = 1
+
+		return max_chain
+
+
+	def longest_chain_col(self, player="Black"):
+		"""
+		Returns the highest number for consecutive pegs in the same column
+		"""
+		max_chain = 0
+		for i in range(0,4):
+			temp = 1
+			for j in range(0,3):
+				color1 = self.grid[j][i].stack[self.find_top_peg_on_square(j,i)].color 
+				color2 = self.grid[j+1][i].stack[self.find_top_peg_on_square(j+1,i)].color
+				if color1 == color2 and color1 != -1:
+					temp += 1
+				else:
+					if temp > max_chain:
+						max_chain = temp
+					temp = 1
+
+		return max_chain
+
+	def get_longest_chain(self, player="Black"):
+		"""
+		Return the highest number of consecutive pegs in a row or a column
+		"""
+		return max(self.longest_chain_row(), self.longest_chain_col())
 
 
 

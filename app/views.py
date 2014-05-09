@@ -151,8 +151,6 @@ def makeMove():
 		not_ob_pd_white.pop(peg_name)
 
 
-	# print mainBoard
-
 	#Check for a winner
 	winner = mainBoard.check_winner()
 	return jsonify(result=result, winner=winner)
@@ -204,7 +202,7 @@ def ai():
 			black_pegs_stacks[peg_number-1].pop()
 		
 
-		
+	print mainBoard
 
 	return jsonify(result = data['result'],
 		           peg_name = data['peg_name'],
