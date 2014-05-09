@@ -17,12 +17,13 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 	     black_stacks, white_stacks):
 	player = "White"
 	comp = "Black"
-	block_winner = board.three_in_a_row_ai(player)
+	# block_winner = board.three_in_a_row_ai(player)
 	res = False
-	winning_move = board.three_in_a_row_ai()
+	winning_move_blocker = board.three_in_a_row_ai()
+	winning_move = board.three_in_a_row_ai("White")
 	print "___________________________________________________"
 	print "___________________________________________________"
-	print winning_move
+	print winning_move_blocker
 	print "___________________________________________________"
 	print "___________________________________________________"
 	
@@ -52,7 +53,6 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 		data['square'] = str(i)+str(j)
 		data['winner'] = winner
 		data['new_peg'] = True
-		#time.sleep(2)
 		return data
 
 	
@@ -64,6 +64,7 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 		nodes_list_replace_pegs_black = get_hv_list_for_replace_pegs(on_board_pegs_black, board, all_pegs)
 		max_replace = find_max_hv(nodes_list_replace_pegs_black,"Black")
 		max_new = find_max_hv(nodes_list_new_pegs_black,"Black")
+
 		if max_replace != 100:
 			max_replace_value = nodes_list_replace_pegs_black[max_replace].hv[1]
 		else: 
@@ -77,9 +78,7 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 
 		
 		#Make a winning move if possible:
-
 		if winning_move:
-			winner = board.check_winner()
 			if winning_move.has_key("row"):
 				winning_square = winning_move["row"]
 			elif winning_move.has_key("col"):
@@ -87,18 +86,54 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 
 			elif winning_move.has_key("diag"):
 				winning_square = winning_move["diag"]
-				
+
 			#Find the biggest peg possible to add to the board
 			gb = black_stacks[get_biggest_peg_possible(black_stacks)].top()
 			
-			print gb
-			
+			#Get peg name
 			for key, value in off_board_pegs_black.iteritems():
 				if gb is value:
 					peg_name = key
 
+			#Perform the move
 			res = board.place_gobblet_on_sqaure(winning_square[0], winning_square[1], gb)
+			winner = board.check_winner()
+			#Return JSON to jQuery
+			if res:
+				data = dict()
+				data['result'] = res
+				data['peg_name'] = peg_name;
+				data['square'] = str(winning_square[0])+str(winning_square[1])
+				data['winner'] = board.check_winner()
+				data['new_peg'] = False
+				return data
 
+
+
+
+		#Block the player from making a winning move
+		if winning_move_blocker:
+			
+			if winning_move_blocker.has_key("row"):
+				winning_square = winning_move_blocker["row"]
+			elif winning_move_blocker.has_key("col"):
+				winning_square = winning_move_blocker["col"]
+
+			elif winning_move_blocker.has_key("diag"):
+				winning_square = winning_move_blocker["diag"]
+
+			#Find the biggest peg possible to add to the board
+			gb = black_stacks[get_biggest_peg_possible(black_stacks)].top()
+			
+			#Get peg name
+			for key, value in off_board_pegs_black.iteritems():
+				if gb is value:
+					peg_name = key
+
+			#Perform the move
+			res = board.place_gobblet_on_sqaure(winning_square[0], winning_square[1], gb)
+			winner = board.check_winner()
+			#Return JSON to jQuery
 			if res:
 				data = dict()
 				data['result'] = res
