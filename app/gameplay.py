@@ -79,10 +79,15 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 		#Make a winning move if possible:
 
 		if winning_move:
+			winner = board.check_winner()
 			if winning_move.has_key("row"):
 				winning_square = winning_move["row"]
 			elif winning_move.has_key("col"):
 				winning_square = winning_move["col"]
+
+			elif winning_move.has_key("diag"):
+				winning_square = winning_move["diag"]
+				
 			#Find the biggest peg possible to add to the board
 			gb = black_stacks[get_biggest_peg_possible(black_stacks)].top()
 			

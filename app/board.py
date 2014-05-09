@@ -368,8 +368,8 @@ class Board(object):
 			if full_col.count(player) == 3:
 				#find the exact location to blockmove
 				for j in range(0,4):
-					if full_col[i]!=player:
-						return (full_col.index(full_col[i]), i)
+					if full_col[j]!=player:
+						return (full_col.index(full_col[j]), i)
 
 			full_col = list()#Reset the list
 		return False
@@ -381,26 +381,58 @@ class Board(object):
 		"""
 		# pdb.set_trace()
 		for i in range(0,4):
-			full_col = list()	#Holds the top pegs colors for the current row
+			full_row = list()	#Holds the top pegs colors for the current row
 			first_top_gobblet_index = self.find_top_peg_on_square(i,0)
 			second_top_gobblet_index = self.find_top_peg_on_square(i,1)
 			third_top_gobblet_index = self.find_top_peg_on_square(i,2)
 			fourth_top_gobblet_index = self.find_top_peg_on_square(i,3)
 
-			full_col.append(self.grid[i][0].stack[first_top_gobblet_index].color)
-			full_col.append(self.grid[i][1].stack[second_top_gobblet_index].color)
-			full_col.append(self.grid[i][2].stack[third_top_gobblet_index].color)
-			full_col.append(self.grid[i][3].stack[fourth_top_gobblet_index].color)
+			full_row.append(self.grid[i][0].stack[first_top_gobblet_index].color)
+			full_row.append(self.grid[i][1].stack[second_top_gobblet_index].color)
+			full_row.append(self.grid[i][2].stack[third_top_gobblet_index].color)
+			full_row.append(self.grid[i][3].stack[fourth_top_gobblet_index].color)
 			
 			#Check that all the colors a the same
-			if full_col.count(player) == 3:
+			if full_row.count(player) == 3:
 				#find the exact location to blockmove
 				for j in range(0,4):
-					if full_col[j]!=player:
-						return (i,full_col.index(full_col[j]))
+					if full_row[j]!=player:
+						return (i,full_row.index(full_row[j]))
 
 			full_col = list()#Reset the list
 		return False
+
+	def three_in_a_row_diagonal(self, player):
+		diag1 = list()
+		#First diagonal
+		for i in range(0,4):
+			diag1.append(self.grid[i][i].stack[self.find_top_peg_on_square(i,i)].color)
+		
+		#Check for 3 in a row in diagonal 1
+		if diag1.count(player) == 3:
+			#get the exact location
+			for j in range(0,4):
+				if diag1[j]!=player:
+					return (j,j)
+
+		#Second diagonal:
+		diag2=list()
+		k = 3
+		for i in range(0,4):
+			diag2.append(self.grid[k][i].stack[self.find_top_peg_on_square(k,i)].color)
+			k -= 1
+
+		#Check for 3 in a row in diagonal 1
+		if diag2.count(player) == 3:
+			#get the exact location
+			k=3
+		
+			for j in range(0,4):
+				if diag2[j]!=player:
+					return (k,j)
+				k -= 1
+		return False
+
 
 	def three_in_a_row_ai(self,player="Black"):
 		"""
@@ -413,12 +445,16 @@ class Board(object):
 		win_dict = dict()
 		row = self.three_in_a_row_horizontal(opponent)
 		col = self.three_in_a_row_vertical(opponent)
+		diag = self.three_in_a_row_diagonal(opponent)
 		
 		if row:
 			win_dict["row"] = row
 		
 		if col:
 			win_dict["col"] = col	
+
+		if diag:
+			win_dict["diag"] = diag
 		
 		if len(win_dict) != 0:
 			return win_dict
