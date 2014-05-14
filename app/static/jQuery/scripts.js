@@ -176,6 +176,7 @@ $(document).ready(function()
     else
     {
       console.log("Move " + pegID  + " form cv" + old_i + old_j + " to cv" + i + j);
+      console.log("!!!!!GOING TO AJAX!!!!")
       $.ajax(
       {
         url:'/_reposition_peg_on_board/',
@@ -188,17 +189,18 @@ $(document).ready(function()
       
         success: function(data)
         {      
-          if(data.result.toString() == "1")
+          console.log(data.result.toString());
+          if(data.result.toString() != "0")
             animatePeg(selectedSqare, selectedPeg);
 
           //Case that the player revealed opponent winning row/ col
-          else if (data.result.toString() == "2")
-          {
-            liftPeg(selectedPeg, selectedSqare);
-            turn = !(turn)
-            gameWon = true;
-            $("#status").text(getCurrentTurnColor().toString() + " won the game.")
-          }
+          // else if (data.result.toString() == "2")
+          // {
+            // liftPeg(selectedPeg, selectedSqare);
+            // turn = !(turn)
+            // gameWon = true;
+            // $("#status").text(getCurrentTurnColor().toString() + " won the game.")
+          // }
           else
             $("#status").text("Illegal Move!")
 

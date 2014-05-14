@@ -34,32 +34,37 @@ class Board(object):
 		"""
 
 		#Get the opponent color
-		if gb.color == "White":
-			color = "Black"
-		else:
-			color = "White"
+		try :
+			if gb.color == "White":
+				color = "Black"
+			else:
+				color = "White"
 
-		if gob_color:
-			color = gob_color
+			if gob_color:
+				color = gob_color
 
-		row_gobblet_list = list()
-		col_gobblet_list = list()
+			row_gobblet_list = list()
+			col_gobblet_list = list()
 
-		#get column gobblets
-		col_gobblet_list.append(self.grid[i][0].stack[self.find_top_peg_on_square(i,0)].color)
-		col_gobblet_list.append(self.grid[i][1].stack[self.find_top_peg_on_square(i,1)].color)
-		col_gobblet_list.append(self.grid[i][2].stack[self.find_top_peg_on_square(i,2)].color)
-		col_gobblet_list.append(self.grid[i][3].stack[self.find_top_peg_on_square(i,3)].color)
+		
+			#get column gobblets
+			col_gobblet_list.append(self.grid[i][0].stack[self.find_top_peg_on_square(i,0)].color)
+			col_gobblet_list.append(self.grid[i][1].stack[self.find_top_peg_on_square(i,1)].color)
+			col_gobblet_list.append(self.grid[i][2].stack[self.find_top_peg_on_square(i,2)].color)
+			col_gobblet_list.append(self.grid[i][3].stack[self.find_top_peg_on_square(i,3)].color)
 
-		#get row gobblets
-		row_gobblet_list.append(self.grid[0][j].stack[self.find_top_peg_on_square(0,j)].color)
-		row_gobblet_list.append(self.grid[1][j].stack[self.find_top_peg_on_square(1,j)].color)
-		row_gobblet_list.append(self.grid[2][j].stack[self.find_top_peg_on_square(2,j)].color)
-		row_gobblet_list.append(self.grid[3][j].stack[self.find_top_peg_on_square(3,j)].color)
+			#get row gobblets
+			row_gobblet_list.append(self.grid[0][j].stack[self.find_top_peg_on_square(0,j)].color)
+			row_gobblet_list.append(self.grid[1][j].stack[self.find_top_peg_on_square(1,j)].color)
+			row_gobblet_list.append(self.grid[2][j].stack[self.find_top_peg_on_square(2,j)].color)
+			row_gobblet_list.append(self.grid[3][j].stack[self.find_top_peg_on_square(3,j)].color)
 
 
-		if col_gobblet_list.count(color) >= 3 or row_gobblet_list.count(color) >= 3:
-			return True
+			if col_gobblet_list.count(color) >= 3 or row_gobblet_list.count(color) >= 3:
+				return True
+
+		except AttributeError:
+			return False
 
 		return False
 
@@ -361,8 +366,8 @@ class Board(object):
 			
 
 
-		return hv + self.get_longest_chain()
-		# return self.get_longest_chain()
+		# return hv + self.get_longest_chain()
+		return self.get_longest_chain()
 
 	def calculate_heuristic(self, player):
 		"""
@@ -376,8 +381,8 @@ class Board(object):
 		player_hv = self.calculate_heuristic_helper(player, opp)
 		opp_hv = self.calculate_heuristic_helper(opp, player)
 
-		return player_hv - opp_hv
-		# return player_hv
+		# return player_hv - opp_hv
+		return player_hv
 
 
 	def three_in_a_row_vertical(self, player):
@@ -436,6 +441,7 @@ class Board(object):
 		return False
 
 	def three_in_a_row_diagonal(self, player):
+
 		diag1 = list()
 		#First diagonal
 		for i in range(0,4):

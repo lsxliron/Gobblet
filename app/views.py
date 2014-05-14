@@ -10,7 +10,6 @@ from gameplay import *
 Create pegs and board
 """
 
-
 mainBoard = Board()
 
 
@@ -209,7 +208,6 @@ def ai():
 		           square = data['square'],
 		           winner = data['winner'],
 		           new_peg = data['new_peg'])
-
 
 
 
