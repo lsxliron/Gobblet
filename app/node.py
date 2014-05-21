@@ -20,3 +20,4 @@ class Node(object):
 			pm=self.peg_moved, 
 			dest=self.destination_square)
 		
+		

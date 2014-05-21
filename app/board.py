@@ -366,8 +366,9 @@ class Board(object):
 			
 
 
-		# return hv + self.get_longest_chain()
-		return self.get_longest_chain()
+		return hv + self.get_longest_chain()
+		# return self.get_longest_chain()
+		# return self.get_longest_chain() #- self.get_longest_chain("White")
 
 	def calculate_heuristic(self, player):
 		"""
@@ -382,7 +383,7 @@ class Board(object):
 		opp_hv = self.calculate_heuristic_helper(opp, player)
 
 		# return player_hv - opp_hv
-		return player_hv
+		return player_hv * 6
 
 
 	def three_in_a_row_vertical(self, player):
@@ -573,7 +574,115 @@ class Board(object):
 		"""
 		Return the highest number of consecutive pegs in a row or a column
 		"""
-		return max(self.longest_chain_row(), self.longest_chain_col())
+		return max(self.longest_chain_row(), self.longest_chain_col()) * 10
+
+
+
+	def find_L_blocker(self, color="White"):
+		
+		if (self.grid[0][0].stack[self.find_top_peg_on_square(0,0)].color == color and 
+		    self.grid[0][1].stack[self.find_top_peg_on_square(0,1)].color == color and
+		    self.grid[1][2].stack[self.find_top_peg_on_square(1,2)].color == color and
+		    self.grid[2][2].stack[self.find_top_peg_on_square(2,2)].color == color):
+			return (0,2)
+
+		elif (self.grid[0][1].stack[self.find_top_peg_on_square(0,1)].color == color and 
+		      self.grid[0][2].stack[self.find_top_peg_on_square(0,2)].color == color and
+		      self.grid[1][3].stack[self.find_top_peg_on_square(1,3)].color == color and
+		      self.grid[2][3].stack[self.find_top_peg_on_square(2,2)].color == color):
+			return (0,3)
+
+		elif (self.grid[0][1].stack[self.find_top_peg_on_square(0,1)].color == color and 
+		      self.grid[0][2].stack[self.find_top_peg_on_square(0,2)].color == color and
+		      self.grid[1][0].stack[self.find_top_peg_on_square(1,0)].color == color and
+		      self.grid[2][0].stack[self.find_top_peg_on_square(2,0)].color == color):
+			return (0,0)
+
+		elif (self.grid[0][2].stack[self.find_top_peg_on_square(0,2)].color == color and 
+		      self.grid[0][3].stack[self.find_top_peg_on_square(0,3)].color == color and
+		      self.grid[1][1].stack[self.find_top_peg_on_square(1,1)].color == color and
+		      self.grid[2][1].stack[self.find_top_peg_on_square(2,1)].color == color):
+			return (0,3)
+
+
+		#SECOND LINE
+		elif (self.grid[1][0].stack[self.find_top_peg_on_square(1,0)].color == color and 
+		      self.grid[1][1].stack[self.find_top_peg_on_square(1,1)].color == color and
+		      self.grid[2][2].stack[self.find_top_peg_on_square(2,2)].color == color and
+		      self.grid[3][2].stack[self.find_top_peg_on_square(3,2)].color == color):
+			return (1,2)
+
+		elif (self.grid[1][1].stack[self.find_top_peg_on_square(1,1)].color == color and 
+		      self.grid[1][2].stack[self.find_top_peg_on_square(1,2)].color == color and
+		      self.grid[2][3].stack[self.find_top_peg_on_square(2,3)].color == color and
+		      self.grid[3][3].stack[self.find_top_peg_on_square(3,3)].color == color):
+			return (1,3)
+
+		elif (self.grid[1][2].stack[self.find_top_peg_on_square(1,2)].color == color and 
+		      self.grid[1][1].stack[self.find_top_peg_on_square(1,1)].color == color and
+		      self.grid[2][0].stack[self.find_top_peg_on_square(2,0)].color == color and
+		      self.grid[3][0].stack[self.find_top_peg_on_square(3,0)].color == color):
+			return (1,0)
+
+		elif (self.grid[1][3].stack[self.find_top_peg_on_square(1,3)].color == color and 
+		      self.grid[1][2].stack[self.find_top_peg_on_square(1,2)].color == color and
+		      self.grid[2][1].stack[self.find_top_peg_on_square(2,1)].color == color and
+		      self.grid[3][1].stack[self.find_top_peg_on_square(3,1)].color == color):
+			return (1,1)
+
+		#THIRD LINE
+		elif (self.grid[2][0].stack[self.find_top_peg_on_square(2,0)].color == color and 
+		      self.grid[2][1].stack[self.find_top_peg_on_square(2,1)].color == color and
+		      self.grid[1][2].stack[self.find_top_peg_on_square(1,2)].color == color and
+		      self.grid[0][2].stack[self.find_top_peg_on_square(0,2)].color == color):
+			return (2,2)
+
+		elif (self.grid[2][1].stack[self.find_top_peg_on_square(2,1)].color == color and 
+		      self.grid[2][2].stack[self.find_top_peg_on_square(2,2)].color == color and
+		      self.grid[1][3].stack[self.find_top_peg_on_square(1,3)].color == color and
+		      self.grid[0][3].stack[self.find_top_peg_on_square(0,3)].color == color):
+			return (2,3)
+
+		elif (self.grid[2][1].stack[self.find_top_peg_on_square(2,1)].color == color and 
+		      self.grid[2][2].stack[self.find_top_peg_on_square(2,2)].color == color and
+		      self.grid[1][0].stack[self.find_top_peg_on_square(1,0)].color == color and
+		      self.grid[0][0].stack[self.find_top_peg_on_square(0,0)].color == color):
+			return (2,0)
+
+		elif (self.grid[2][2].stack[self.find_top_peg_on_square(2,2)].color == color and 
+		      self.grid[2][3].stack[self.find_top_peg_on_square(2,3)].color == color and
+		      self.grid[1][1].stack[self.find_top_peg_on_square(1,1)].color == color and
+		      self.grid[0][1].stack[self.find_top_peg_on_square(0,1)].color == color):
+			return (2,1)
+
+		#Fourth line
+		elif (self.grid[3][0].stack[self.find_top_peg_on_square(3,0)].color == color and 
+		      self.grid[3][1].stack[self.find_top_peg_on_square(3,1)].color == color and
+		      self.grid[2][2].stack[self.find_top_peg_on_square(2,2)].color == color and
+		      self.grid[1][2].stack[self.find_top_peg_on_square(1,2)].color == color):
+			return (3,2)
+
+		elif (self.grid[3][1].stack[self.find_top_peg_on_square(3,1)].color == color and 
+		      self.grid[3][2].stack[self.find_top_peg_on_square(3,2)].color == color and
+		      self.grid[2][3].stack[self.find_top_peg_on_square(2,3)].color == color and
+		      self.grid[1][3].stack[self.find_top_peg_on_square(1,3)].color == color):
+			return (3,3)
+
+		elif (self.grid[3][1].stack[self.find_top_peg_on_square(3,1)].color == color and 
+		      self.grid[3][2].stack[self.find_top_peg_on_square(3,2)].color == color and
+		      self.grid[2][0].stack[self.find_top_peg_on_square(2,0)].color == color and
+		      self.grid[1][0].stack[self.find_top_peg_on_square(1,0)].color == color):
+			return (3,0)
+
+		elif (self.grid[3][2].stack[self.find_top_peg_on_square(3,2)].color == color and 
+		      self.grid[3][3].stack[self.find_top_peg_on_square(3,3)].color == color and
+		      self.grid[2][1].stack[self.find_top_peg_on_square(2,1)].color == color and
+		      self.grid[1][1].stack[self.find_top_peg_on_square(1,1)].color == color):
+			return (3,1)
+
+		return False
+
+
 
 
 

@@ -187,7 +187,8 @@ def ai():
 	data = play(mainBoard, pd, ob_pd_black, not_ob_pd_black, 
 		        ob_pd_white, not_ob_pd_white,
 		        black_pegs_stacks, white_pegs_stacks)
-	
+
+
 	if data['new_peg']:
 		#If move is valid, add peg to on_board dictionary (ob_pd)
 		if not_ob_pd_black.has_key(data['peg_name']):

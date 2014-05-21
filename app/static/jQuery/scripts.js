@@ -125,7 +125,7 @@ $(document).ready(function()
 
           if (data.winner.toString() == "true")
           {
-            $("#status").text(getCurrentTurnColor().toString() + " won the game.")
+            $("#status").text(flipColor(getCurrentTurnColor().toString()) + " won the game.");
             // $("#status").text(flipColor().toString() + " won the game.")
             gameWon = true
           }
@@ -206,14 +206,14 @@ $(document).ready(function()
 
           if (data.winner.toString() == "true")
           {
-            $("#status").text(getCurrentTurnColor().toString() + " won the game.")
+            $("#status").text(flipColor(getCurrentTurnColor().toString()) + " won the game.");
             gameWon = true
           }
 
       }});//AJAX END
     }
 
-      if (HUMAN_VS_PC == true)
+      if ((HUMAN_VS_PC == true) && (!(gameWon)))
       {
 
         $.ajax(
@@ -225,9 +225,9 @@ $(document).ready(function()
         
           success: function(data)
           {
-            console.log("---------------------");
-            console.log(data.result.toString());
-            console.log("---------------------");
+            console.log("!!!!!!!!!!!!!!!!!!!!!!!!");
+            console.log(data.winner.toString());
+            console.log("!!!!!!!!!!!!!!!!!!!!!!!!");
             
             if ((data.result.toString() != 0) || (data.result.toString() != "False"))
             {
@@ -250,7 +250,7 @@ $(document).ready(function()
 
             if (data.winner.toString() == "true")
             {
-              $("#status").text(getCurrentTurnColor().toString() + " won the game.");
+              $("#status").text(flipColor(getCurrentTurnColor().toString()) + " won the game.");
               gameWon = true
             }
           }});//AJAX END
