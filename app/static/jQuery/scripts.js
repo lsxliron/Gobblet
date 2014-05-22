@@ -224,19 +224,11 @@ $(document).ready(function()
         
         
           success: function(data)
-          {
-            console.log("!!!!!!!!!!!!!!!!!!!!!!!!");
-            console.log(data.winner.toString());
-            console.log("!!!!!!!!!!!!!!!!!!!!!!!!");
-            
+          {          
             if ((data.result.toString() != 0) || (data.result.toString() != "False"))
             {
-              console.log("IN THE IF")
               selectedSqare = $("#cv"+data.square.toString())
               selectedPeg = $("#"+data.peg_name.toString())
-              console.log("---------------------");
-              console.log( "Moving "+selectedPeg.attr("id") + " To Square " + selectedSqare.attr("id"));
-              console.log("---------------------");
               animatePeg(selectedSqare, selectedPeg);
             }
 
@@ -255,9 +247,6 @@ $(document).ready(function()
             }
           }});//AJAX END
       }
-
-
-    // }
   });
 
 
@@ -305,10 +294,33 @@ function animatePeg(square, peg)
   peg.css('position', 'absolute');
   peg.css('left', peg.position().left);
   peg.css('top', peg.position().top);
-  
+  // alert(peg.position().top);
+  // pos_before = peg.position().top;  
+
+  var source = parseInt((peg.position().top)/100);
+  var dest = parseInt((y-y_offset)/100)
+  var current_z;
+  if (source != 7)
+  {
+    z_mult = dest-source;
+    current_z = parseInt(peg.css('z-index'));
+    current_z = current_z + (5*z_mult);
+    peg.css('z-index',current_z);
+    console.log(dest-source);
+  }
+  else
+  {
+    current_z = parseInt(peg.css('z-index'));
+    current_z = current_z + (5*dest);
+    peg.css('z-index',current_z.toString());
+  }
+
 
   peg.animate({'left':x + x_offset, 'top':y-y_offset}, {'duration':1000});
+  pos_after = peg.position().top;  
+  
 
+  
   //Clear selection
   peg.css('opacity', 1);
   peg.css('-webkit-filter','invert(0%)');
