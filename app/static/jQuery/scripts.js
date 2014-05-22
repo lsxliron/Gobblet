@@ -1,8 +1,8 @@
 
 //vars
 //-----
-//When turn is true: white player turn
-//When turn is false: black player turn
+//When turn = true: white player turn
+//When turn = false: black player turn
 
 var turn = true; 
 var gameWon = false //Disable board after winning
@@ -95,7 +95,6 @@ $(document).ready(function()
     }
 
    
-
     //Place new peg on the board
     if (newPegOnBoard)
     {
@@ -131,44 +130,6 @@ $(document).ready(function()
           }
       }});//AJAX END
 
-      // if (HUMAN_VS_PC == true)
-      // {
-
-      //   $.ajax(
-      //   {
-      //     url:'/_ai_api/',
-      //     method:'POST',
-      //     // data: {},
-        
-        
-      //     success: function(data)
-      //     {
-      //       console.log(data.result.toString());
-      //       if (data.result.toString() == "true")
-      //       {
-      //         selectedSqare = $("#cv"+data.square.toString())
-      //         selectedPeg = $("#"+data.peg_name.toString())
-      //         animatePeg(selectedSqare, selectedPeg);
-      //       }
-
-
-      //       else
-      //       {
-      //         $("#status").attr('class','alert alert-danger')
-      //         $("#status").text("Illegal Move!")
-      //       }
-              
-
-      //       if (data.winner.toString() == "true")
-      //       {
-      //         $("#status").text(getCurrentTurnColor().toString() + " won the game.")
-      //         gameWon = true
-      //       }
-      //   }});//AJAX END
-      // }
-
-
-
      }
     
 
@@ -194,13 +155,6 @@ $(document).ready(function()
             animatePeg(selectedSqare, selectedPeg);
 
           //Case that the player revealed opponent winning row/ col
-          // else if (data.result.toString() == "2")
-          // {
-            // liftPeg(selectedPeg, selectedSqare);
-            // turn = !(turn)
-            // gameWon = true;
-            // $("#status").text(getCurrentTurnColor().toString() + " won the game.")
-          // }
           else
             $("#status").text("Illegal Move!")
 

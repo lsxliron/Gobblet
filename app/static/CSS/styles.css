@@ -7,7 +7,6 @@
 .tinyPegs
 {
 	-webkit-transform: scale(0.8);
-	/*z-index: 100;*/
 	position: absolute;
 	margin-left: -4%;
 	margin-top: -4%;
@@ -15,7 +14,6 @@
 
 .smallPegs
 {
-	/*z-index: 200;*/
 	position: absolute;
 	margin-left: -4%;
 	margin-top: -4%;
@@ -24,7 +22,6 @@
 .mediumPegs
 {
 	-webkit-transform: scale(1.2);
-	/*z-index: 300;*/
 	position: absolute;
 	margin-left: -4%;
 	margin-top: -4%;
@@ -33,12 +30,10 @@
 .bigPegs
 {
 	-webkit-transform: scale(1.4);
-	/*z-index: 400;*/
 	position: absolute;
 	margin-left: -4%;
 	margin-top: -4%;
 
-	/*-webkit-filter: contrast(150%);*/
 }
 
 #credits
@@ -49,4 +44,3 @@
 	text-align: center;
 	box-shadow: black;
 }
-

@@ -30,11 +30,9 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 	
 
 	#First move- put one large peg on a random square
-	# pdb.set_trace()
 	if len(on_board_pegs_black) ==0:
 
 		peg_number = randint(1, 3)
-		# peg_number=3
 		res = False
 
 		peg_object = black_stacks[peg_number-1].top()
@@ -49,8 +47,6 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 		while not res:
 			i = randint(0,3)
 			j = randint(0,3)
-			# i=2
-			# j=1
 			
 			#Perform move
 			res = board.place_gobblet_on_sqaure(i, j, all_pegs[peg_name])
@@ -68,6 +64,7 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 		data['new_peg'] = True
 		return data
 
+	#Case that PC has a winning move
 	if PC_winning_move:
 		if PC_winning_move.has_key('row'):
 			PC_winning_square = PC_winning_move['row']
@@ -80,13 +77,13 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 		elif PC_winning_move.has_key('diag'):
 			PC_winning_square = PC_winning_move['diag']
 
+		#Get winning square and opponent peg data
 		i = PC_winning_square[0]
 		j = PC_winning_square[1]
 		opponent_peg_size = board.grid[i][j].stack[board.find_top_peg_on_square(PC_winning_square[0],PC_winning_square[1])].size
 		opponent_peg_color = board.grid[i][j].stack[board.find_top_peg_on_square(PC_winning_square[0],PC_winning_square[1])].color
-		# if opponent_peg.size != 4:
-		# if opponent_peg == "(free)":
-
+		
+		#Case the winning square is empty- posible to place new peg
 		if board.grid[i][j].stack[board.find_top_peg_on_square(i,j)].size == -1:
 			peg = black_stacks[get_biggest_peg_possible(black_stacks)].top()
 			
@@ -94,6 +91,7 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 						if peg is value:
 							peg_name = key
 			res = board.place_gobblet_on_sqaure(PC_winning_square[0],PC_winning_square[1],peg)
+			
 			if res:
 				data = dict()
 				data['result'] = res
@@ -118,11 +116,14 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 									current_i = i
 									current_j = j
 
+			#Get peg name
 			for key, value in on_board_pegs_black.iteritems():
 				if peg is value:
 					peg_name = key
 			
+			#Perform move
 			res = board.move_peg_on_board(current_i, current_j,PC_winning_square[0], PC_winning_square[1])
+			
 			if res:
 				data = dict()
 				data['result'] = res
@@ -131,7 +132,6 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 				data['winner'] = board.check_winner()
 				data['new_peg'] = False
 				return data
-
 
 
 	if winning_move:
@@ -151,40 +151,11 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 
 
 	if winning_square:
-		# temp_size = 0
-		# temp_color=None
 		temp = board.grid[winning_square[0]][winning_square[1]].stack[board.find_top_peg_on_square(winning_square[0],winning_square[1])]
-		# if temp != "(free)":
-		# 	temp_size = temp.size
-		# 	temp_color = temp.color
-		# if board.find_top_peg_on_square(winning_square[0],winning_square[1]).size != 4:
+
 		if temp.size != 4 or temp.color != 'Black':
 			
 			#Case that there are no pegs to reposition on the board- place a new peg
-			# if len(on_board_pegs_black)<4 or board.grid[winning_square[0]][winning_square[1]].empty():
-			# 	peg_index = get_biggest_peg_possible(black_stacks)
-			# 	peg = black_stacks[peg_index].top()
-				
-			# 	#Get peg name
-			# 	for key, value in off_board_pegs_black.iteritems():
-			# 		if peg is value:
-			# 			peg_name = key
-
-			# 	res = board.place_gobblet_on_sqaure(winning_square[0], winning_square[1], peg)
-			# 	winner = board.check_winner()
-			# 	if res:
-			# 		data = dict()
-			# 		data['result'] = res
-			# 		data['peg_name'] = peg_name;
-			# 		data['square'] = str(winning_square[0])+str(winning_square[1])
-			# 		data['winner'] = winner
-			# 		data['new_peg'] = True
-
-			# 		# pdb.set_trace()
-			# 		return data
-
-
-
 			found_big_peg = False
 			for i in range(0,4):
 				for j in range(0,4):
@@ -214,7 +185,6 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 				data['winner'] = board.check_winner()
 				data['new_peg'] = False
 
-				# pdb.set_trace()
 				return data
 
 
@@ -234,7 +204,7 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 				if peg is value:
 					peg_name = key
 
-
+			#Make a move
 			res = board.move_peg_on_board(i,j,peg)
 
 
@@ -246,7 +216,7 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 				data['winner'] = board.check_winner()
 				data['new_peg'] = True
 
-				# pdb.set_trace()
+				
 				return data
 
 		#Re- place a large gobblet on the board
@@ -280,69 +250,10 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 				data['winner'] = board.check_winner()
 				data['new_peg'] = False
 
-				# pdb.set_trace()
 				return data
 
-
-#___TODAY___
-		# else:
-			
-		# 	node = nodes_list_replace_pegs[max_replace]
-		# 	res = board.move_peg_on_board(node.current_location[0],node.current_location[1], winning_square[0],winning_square[1])
-
-		# 	peg = node.peg_moved
-
-		# 	for key, value in off_board_pegs_black.iteritems():
-		# 			if peg == value:
-		# 				peg_name = key
-
-		# 	data = dict()
-		# 	data['result'] = res
-		# 	data['peg_name'] = peg_name;
-		# 	data['square'] = str(winning_square[0])+str(winning_square[1])
-		# 	data['winner'] = board.check_winner()
-		# 	data['new_peg'] = False
-
-		# 	# pdb.set_trace()
-		# 	return data
-#___TODAY___
-
-
-		# #Position is already blocked, place new peg on the board
-		# else:
-		# 	res=False
-		# 	nodes_list_new_pegs_black = get_hv_list_for_new_pegs(black_stacks, board)
-		# 	max_new = find_max_hv(nodes_list_new_pegs_black,"Black")
-		# 	node = nodes_list_new_pegs_black[max_new]
-		# 	square = node.destination_square
-		# 	while square[0] == winning_square[0] and square[1] == winning_square[1]
-		# 	peg = node.peg_moved
-		# 	res = board.place_gobblet_on_sqaure(square[0], square[1], peg)
-		# 	for key, value in off_board_pegs_black.iteritems():
-		# 		if peg is value:
-		# 			peg_name = key
-
-
-		# 	if  res:
-		# 		data = dict()
-		# 		data['result'] = res
-		# 		data['peg_name'] = peg_name;
-		# 		data['square'] = str(winning_square[0])+str(winning_square[1])
-		# 		data['winner'] = board.check_winner()
-		# 		data['new_peg'] = True
-		# 		return data
-
-
-
-
-
-
-	if not res:
-	# else:
-		#Setup variables
-		# nodes_list_new_pegs= list()
-		# nodes_list_replace_pegs=list()
-	
+	#Play by heuristics values
+	if not res:	
 		nodes_list_new_pegs_black = get_hv_list_for_new_pegs(black_stacks, board)
 		nodes_list_replace_pegs_black = get_hv_list_for_replace_pegs(on_board_pegs_black, board, all_pegs)
 		max_replace = find_max_hv(nodes_list_replace_pegs_black,"Black")
@@ -361,10 +272,8 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 
 		
 		#Make a winning move if possible:
-		# pdb.set_trace()
 		print winning_move
 		if winning_move:
-			# pdb.set_trace()
 			if winning_move.has_key("row"):
 				winning_square = winning_move["row"]
 			elif winning_move.has_key("col"):
@@ -385,9 +294,7 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 				if gb is value:
 					peg_name = key
 			
-			##########
-			#ROW CASE#
-			##########
+			
 			keep_looking = True
 			valid_res = False
 			forbidden_row = winning_square[0]
@@ -406,14 +313,15 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 					for j in range(0,4):
 						loose = True
 						board_copy = copy.deepcopy(board)
-						# pdb.set_trace()
+						
+						#Don't break the current chain of 3
 						if i != forbidden_row and (res != 1 or res != 2) and keep_looking and (i!=winning_square[0] and j!= winning_square[1]):
 							top_peg = board.grid[i][j].stack[board.find_top_peg_on_square(i,j)]
 							loose =board.three_in_a_row(i,j,top_peg,"White")
-							# pdb.set_trace()
-							
+						
+							#Cover opponent peg if possible
 							if top_peg.color == "Black" and top_peg.size>opponent_peg_size and not loose and (i!= winning_square[0] and j!= winning_square[1]):
-								# pdb.set_trace()
+						
 								res = board_copy.move_peg_on_board(i,j,winning_square[0], winning_square[1])
 								#Get peg name
 								if res !=0:
@@ -477,7 +385,7 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 
 
 
-		
+		#Case that HV is greatr for placing a new peg
 		if max_replace_value < max_new_value and not res:  
 			node = nodes_list_new_pegs_black[max_new]
 			print node.current_location
@@ -516,7 +424,7 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 			res = False
 			loose = True
 			peg_name=None
-			#do_once=False
+
 
 			node = nodes_list_replace_pegs_black[max_replace]
 			gb = board.find_top_peg_on_square(node.current_location[0],node.current_location[1])
@@ -537,17 +445,18 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 				for key, value in on_board_pegs_black.iteritems():# off_board_pegs_black.iteritems():
 					if value is board.grid[node.current_location[0]][node.current_location[1]].stack[gb]:
 						peg_name=key
+
 				board_copy = copy.deepcopy(board)
 				res = board_copy.move_peg_on_board(current_location[0],current_location[1],square[0],square[1])
 			
-
+			#Case the while loop didn't execute
 			if not peg_name:
 				#Get peg name
 				for key, value in on_board_pegs_black.iteritems():# off_board_pegs_black.iteritems():
 					if value is board.grid[node.current_location[0]][node.current_location[1]].stack[gb]:
 						peg_name=key
 
-			#Case the while loop didn't execute
+			
 			
 			res = board.move_peg_on_board(current_location[0],current_location[1],square[0],square[1])
 
@@ -572,9 +481,10 @@ def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black,
 
 
 
-
-
 def get_hv_list_for_new_pegs(player_stacks, board):
+	"""
+	Returns a list of the heuristic values for placing new pegs on the board
+	"""
 
 	nodes_list_new_pegs=list()
 
@@ -600,6 +510,9 @@ def get_hv_list_for_new_pegs(player_stacks, board):
 
 
 def get_hv_list_for_replace_pegs(on_board_pegs, board, all_pegs):
+	"""
+	Returns a list of the heuristic values for re- placing pegs on the board
+	"""
 	nodes_list_replace_pegs = list()
 	
 	# pdb.set_trace()
@@ -685,25 +598,3 @@ def find_min_hv(nodes_list, player):
 			min_hv_index = i
 
 	return min_hv_index
-
-# def checK_if_loose_move(board, peg, i, j, player="White"):
-# 	"""
-# 	Returns true if removing peg will result in three in a row for the opponent
-# 	"""
-
-# 	row_list = list()
-# 	col_list = list()
-# 	for i in range(0,4):
-# 		row_list.append(board.grid[i][j].stack[board.find_top_peg_on_square(i,j)]).color
-
-	
-
-
-
-
-
-
-
-
-
-

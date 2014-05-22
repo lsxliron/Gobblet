@@ -91,12 +91,6 @@ class Board(object):
 		if self.grid[i][j].full():
 			return False
 
-		# Make sure the pegs are different colors (no white on white/ black on black)
-		# top_gobblet_index = self.find_top_peg_on_square(i, j)
-		# if self.grid[i][j].stack[top_gobblet_index].color == gb.color:
-			# return False
-
-
 		#First peg in the square- occupy if it's free'
 		elif self.grid[i][j].empty():
 			gb.on_board = True
@@ -150,8 +144,6 @@ class Board(object):
 	
 
 
-
-
 	def find_top_peg_on_square(self, i, j):
 		"""
 		Finds the top peg on a given square
@@ -169,35 +161,10 @@ class Board(object):
 		return top
 
 
-	# def winner_row(self):
-	# 	"""
-	# 	Returns true if there is a winning row or false otherwise
-	# 	We create a list of booleans for the board rows. If there exists
-	# 	a True row then there is a winner.
-	# 	"""
-	# 	full_row = list()
-
-	# 	#Check if there exists a winning row
-	# 	for i in range(0,4):
-	# 		winner = True
-	# 		for j in range(0,3):
-	# 			#Case that the square is not empty
-	# 			if not self.grid[i][j].empty():
-	# 				#get the top gobblet on the square
-	# 				current_top_gobblet_index = self.find_top_peg_on_square(i,j)
-	# 				next_top_gobblet_index = self.find_top_peg_on_square(i,j+1)
-
-	# 				#Check if gobblets have the same colors
-	# 				if self.grid[i][j].stack[current_top_gobblet_index].color != self.grid[i][j+1].stack[next_top_gobblet_index].color:
-	# 					winner = False
-	# 			#Case the square is empty- impossible to be a winning row
-	# 			else:
-	# 				winner = False
-
-	# 		full_row.append(winner)
-
-	# 	return True in full_row
 	def winner_row(self):
+		"""
+		Returns true if there is a winning row
+		"""
 		full_row = list()
 
 		#Check for a row winner
@@ -211,7 +178,11 @@ class Board(object):
 				full_row=list()
 		return False
 
+	
 	def winner_col(self):
+		"""
+		Returns true if there is a winning column
+		"""
 		full_col = list()
 
 		for i in range(0,4):
@@ -226,41 +197,6 @@ class Board(object):
 
 
 
-	# def winner_col(self):
-	# 	"""
-	# 	Returns true if there is a winning column or false otherwise
-	# 	We create a list of booleans for the board columns. If there exists
-	# 	a True row then there is a winner.
-	# 	"""
-		
-	# 	#If we have empty square on a col this col can't be a winner
-	# 	exists_empty_squares = False
-		
-	# 	for i in range(0,4):
-	# 		full_col = list()	#Holds the top pegs colors for the current row
-	# 		for j in range(0,4):
-	# 			if self.grid[j][i].empty():
-	# 				exists_empty_squares = True
-
-	# 		if not exists_empty_squares:
-	# 			first_top_gobblet_index = self.find_top_peg_on_square(0,i)
-	# 			second_top_gobblet_index = self.find_top_peg_on_square(1,i)
-	# 			third_top_gobblet_index = self.find_top_peg_on_square(2,i)
-	# 			fourth_top_gobblet_index = self.find_top_peg_on_square(3,i)
-
-	# 			full_col.append(self.grid[0][i].stack[first_top_gobblet_index].color)
-	# 			full_col.append(self.grid[1][i].stack[second_top_gobblet_index].color)
-	# 			full_col.append(self.grid[2][i].stack[third_top_gobblet_index].color)
-	# 			full_col.append(self.grid[3][i].stack[fourth_top_gobblet_index].color)
-
-	# 			#Check that all the colors a the same
-	# 			if full_col.count(full_col[0]) == len(full_col):
-	# 				return True
-
-	# 		exists_empty_squares=False
-
-	# 	return False
-
 	def winner_diag(self):
 		"""
 		Returns true if a player wins diagonally and false otherwise
@@ -272,7 +208,6 @@ class Board(object):
 			colors_list.append(self.grid[i][i].stack[self.find_top_peg_on_square(i,i)].color)
 		
 		if colors_list[0] != -1 and colors_list.count(colors_list[0]) == 4:
-			print "----------------------------DIAG----------------------------"
 			return True
 
 		#second diagonal
@@ -283,7 +218,6 @@ class Board(object):
 			k -= 1
 
 		if colors_list[0] != -1 and colors_list.count(colors_list[0]) == 4:
-			print "----------------------------DIAG----------------------------"
 			return True
 
 		return False
@@ -296,7 +230,6 @@ class Board(object):
 		column_winner = self.winner_col()
 		row_winner = self.winner_row()
 		diag_winner = self.winner_diag()
-		print "\nROW:\t{r}\nCOL:\t{c}\nDIAG:\t{d}\n\n".format(r=row_winner, c=column_winner, d=diag_winner)
 		return column_winner or row_winner or diag_winner
 
 	def reset(self):
@@ -442,6 +375,9 @@ class Board(object):
 		return False
 
 	def three_in_a_row_diagonal(self, player):
+		"""
+		Returns true if the oppoent can win the next move with a diagonal
+		"""
 
 		diag1 = list()
 		#First diagonal
@@ -681,15 +617,3 @@ class Board(object):
 			return (3,1)
 
 		return False
-
-
-
-
-
-
-
-
-
-
-
-
