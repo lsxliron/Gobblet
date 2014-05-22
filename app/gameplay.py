@@ -15,7 +15,7 @@ import time
 def play(board, all_pegs, on_board_pegs_black, off_board_pegs_black, 
 	     on_board_pegs_white, off_board_pegs_white, 
 	     black_stacks, white_stacks):
-
+	pdb.set_trace()
 	if board.check_winner():
 		return
 

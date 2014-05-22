@@ -1,7 +1,6 @@
 from square import *
 from gobblet import *
 from collections import Counter
-import pdb
 
 
 class Board(object):
