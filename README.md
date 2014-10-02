@@ -21,7 +21,7 @@ Start the app by typing
 ```
 python runserver.py
 ```
-Open your broser and navigate to [localhost:8000](localhost:8000)
+Open your broser and navigate to [localhost:8000](127.0.0.1:8000)
 
 ##Rules##
 ###Goal:###
