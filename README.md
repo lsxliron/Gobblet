@@ -21,17 +21,18 @@ Start the app by typing
 ```
 python runserver.py
 ```
+Open your broser and navigate to [localhost:8000](localhost:8000)
 
 ##Rules##
 ###Goal:###
 This game is a complex version of Tic Tac Toe game. The game uses a 4x4 board and the goal is to create a consecutive 4 pegs in a row, column or diagonal.
 
 ###Rules:###
-* Each player has 12 pegs in 4 different sizes ordered in stacks. The player can only place on the board the top peg on each stack.
+* Each player has 12 pegs in 4 different sizes ordered in 3 stacks. The player can place on the board only the top peg from each stack.
 * A player can move pegs that are already on the board in his turn.
 * A player can cover his opponent peg with a bigger peg. While a peg is covered it cannot be moved. 
-* It is not allowed to cover an opponent peg with a new peg unless this move will prevent a winning move.
-* A player may uncovered his opponent peg in his turn but if a row, column or diagonal for his opponent by this move, the player lost the game.
+* It is not allowed to cover an opponent peg with a new peg (only with the pegs that are currently on the board), unless this move will block a winning move.
+* A player may uncover his opponent pegs in his turn but if a row, column or diagonal is created for his opponent by this move, the player lost the game.
 
 Enjoy!
 
